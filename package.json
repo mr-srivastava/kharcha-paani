@@ -19,6 +19,7 @@
     "react-icons": "^4.3.1",
     "react-scripts": "4.0.3",
     "typescript": "^4.5.2",
+    "uuid": "^8.3.2",
     "web-vitals": "^1.1.2"
   },
   "prettier": {
@@ -46,5 +47,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/uuid": "^8.3.3"
   }
 }

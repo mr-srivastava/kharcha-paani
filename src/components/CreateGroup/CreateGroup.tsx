@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
+import { v4 as uuidv4 } from 'uuid';
 import {
   Button,
+  CloseButton,
   FormControl,
   InputGroup,
   ListGroup,
@@ -14,7 +16,9 @@ import {
   IoChevronBackCircleOutline,
   IoChevronForwardCircleOutline,
   IoCheckmarkCircleOutline,
-  IoPeopleCircleOutline,
+  IoPeopleOutline,
+  IoPersonAddOutline,
+  IoPerson,
   IoInformationCircleOutline,
 } from 'react-icons/io5';
 import { currencies } from '../../utils';
@@ -26,11 +30,16 @@ type CreateGroupProps = {
   setOpen: Function;
 };
 
+type Member = {
+  id: string;
+  name: string;
+};
+
 function CreateGroup({ open, setOpen }: CreateGroupProps) {
   const [step, setStep] = useState<number>(0);
   const [groupName, setGroupName] = useState<string>('');
   const [memberText, setMemberText] = useState<string>('');
-  const [members, setMembers] = useState<string[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
   const handleClose = () => setOpen(false);
 
   const handlePrevClick = () => {
@@ -43,7 +52,7 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
 
   const handleGroupNameChange = (e: any) => {
     e.preventDefault();
-    setGroupName(e.target.value);
+    setGroupName(e.target.value.trim());
   };
 
   const handleMemberTextChange = (e: any) => {
@@ -52,16 +61,25 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
   };
 
   const handleMemberAdd = () => {
-    setMembers((prev) => [...prev, memberText]);
+    const newMember = {
+      id: uuidv4(),
+      name: memberText,
+    };
+    setMembers((prev) => [...prev, newMember]);
     setMemberText('');
+  };
+
+  const handleMemberRemove = (id: string) => {
+    const updatedList = members.filter((mem) => mem.id !== id);
+    setMembers(updatedList);
   };
 
   const GroupNameJsx = () => {
     return (
       <>
         <InputGroup className="mb-3 group-name-input">
-          <InputGroup.Text id="basic-addon1">
-            <IoPeopleCircleOutline />
+          <InputGroup.Text>
+            <IoPeopleOutline />
           </InputGroup.Text>
           <FormControl
             value={groupName}
@@ -69,6 +87,11 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
             aria-label="GroupName"
             aria-describedby="basic-addon1"
             onChange={handleGroupNameChange}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleNextClick();
+              }
+            }}
           />
         </InputGroup>
       </>
@@ -79,17 +102,26 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
     return (
       <>
         <InputGroup className="mb-3">
+          <InputGroup.Text>
+            <IoPersonAddOutline />
+          </InputGroup.Text>
           <FormControl
             value={memberText}
             placeholder="Add member"
             aria-label="Add member"
             aria-describedby="basic-addon2"
             onChange={handleMemberTextChange}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleMemberAdd();
+              }
+            }}
           />
           <Button
             variant="outline-secondary"
             id="button-addon2"
             onClick={handleMemberAdd}
+            disabled={memberText.trim() === ''}
           >
             Add
           </Button>
@@ -101,8 +133,16 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
           </div>
         </div>
         <ListGroup>
-          {members.map((mem, index) => (
-            <ListGroup.Item key={`${mem}_${index}`}>{mem}</ListGroup.Item>
+          {members.map((mem) => (
+            <ListGroup.Item key={mem.id} className="member-list-wrap">
+              <div className="member-list-item">
+                <div className="member-wrap">
+                  <IoPerson />
+                  <span>{mem.name}</span>
+                </div>
+                <CloseButton onClick={() => handleMemberRemove(mem.id)} />
+              </div>
+            </ListGroup.Item>
           ))}
         </ListGroup>
       </>
@@ -127,7 +167,7 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
         size="lg"
       >
         <Modal.Header closeButton>
-          <Modal.Title>Create Group</Modal.Title>
+          <Modal.Title>{step === 0 ? 'Create Group' : groupName}</Modal.Title>
         </Modal.Header>
         <Modal.Body>{BodyContent[step]}</Modal.Body>
         <Modal.Footer>
