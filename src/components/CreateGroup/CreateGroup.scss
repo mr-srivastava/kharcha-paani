@@ -5,6 +5,9 @@
 }
 
 .create-group-modal {
+  .group-name-input {
+    width: 50%;
+  }
   .add-member-note {
     display: flex;
     align-items: center;

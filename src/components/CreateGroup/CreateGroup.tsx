@@ -59,7 +59,7 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
   const GroupNameJsx = () => {
     return (
       <>
-        <InputGroup className="mb-3">
+        <InputGroup className="mb-3 group-name-input">
           <InputGroup.Text id="basic-addon1">
             <IoPeopleCircleOutline />
           </InputGroup.Text>
