@@ -1,3 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Quando&family=Righteous&display=swap');
+
+.create-group-modal-wrapper {
+  font-family: Quando;
+}
+
+.create-group-modal {
+  .add-member-note {
+    display: flex;
+    align-items: center;
+    .add-member-note-text {
+      font-size: 14px;
+      margin-left: 5px;
+    }
+  }
+}
+
 .prev-step {
   cursor: pointer;
   .back-icon,
@@ -18,40 +35,45 @@
 }
 
 .next-step {
-    cursor: pointer;
-    .next-icon,
-    .next-icon-hover {
-      font-size: 32px;
-    }
-    .next-icon-hover {
+  cursor: pointer;
+  .next-icon,
+  .next-icon-hover {
+    font-size: 32px;
+  }
+  .next-icon-hover {
+    display: none;
+  }
+  &:hover {
+    .next-icon {
       display: none;
     }
-    &:hover {
-      .next-icon {
-        display: none;
-      }
-      .next-icon-hover {
-        display: unset;
-      }
+    .next-icon-hover {
+      display: unset;
     }
   }
 
-  .confirm-step {
-    cursor: pointer;
-    .confirm-icon,
-    .confirm-icon-hover {
-      font-size: 32px;
-    }
-    .confirm-icon-hover {
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+}
+
+.confirm-step {
+  cursor: pointer;
+  .confirm-icon,
+  .confirm-icon-hover {
+    font-size: 32px;
+  }
+  .confirm-icon-hover {
+    display: none;
+  }
+  &:hover {
+    .confirm-icon {
       display: none;
     }
-    &:hover {
-      .confirm-icon {
-        display: none;
-      }
-      .confirm-icon-hover {
-        display: unset;
-      }
+    .confirm-icon-hover {
+      display: unset;
     }
   }
-
+}
