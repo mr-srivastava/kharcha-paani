@@ -1,0 +1,57 @@
+.prev-step {
+  cursor: pointer;
+  .back-icon,
+  .back-icon-hover {
+    font-size: 32px;
+  }
+  .back-icon-hover {
+    display: none;
+  }
+  &:hover {
+    .back-icon {
+      display: none;
+    }
+    .back-icon-hover {
+      display: unset;
+    }
+  }
+}
+
+.next-step {
+    cursor: pointer;
+    .next-icon,
+    .next-icon-hover {
+      font-size: 32px;
+    }
+    .next-icon-hover {
+      display: none;
+    }
+    &:hover {
+      .next-icon {
+        display: none;
+      }
+      .next-icon-hover {
+        display: unset;
+      }
+    }
+  }
+
+  .confirm-step {
+    cursor: pointer;
+    .confirm-icon,
+    .confirm-icon-hover {
+      font-size: 32px;
+    }
+    .confirm-icon-hover {
+      display: none;
+    }
+    &:hover {
+      .confirm-icon {
+        display: none;
+      }
+      .confirm-icon-hover {
+        display: unset;
+      }
+    }
+  }
+
