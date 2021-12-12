@@ -22,6 +22,7 @@ import {
   IoPerson,
   IoInformationCircleOutline,
 } from 'react-icons/io5';
+import { useAppDispatch } from '../../state/stateHooks';
 import { currencies } from '../../utils';
 
 import './CreateGroup.scss';
@@ -34,10 +35,12 @@ type CreateGroupProps = {
 type Member = {
   id: string;
   name: string;
+  share: number;
 };
 
 function CreateGroup({ open, setOpen }: CreateGroupProps) {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const [page, setPage] = useState<number>(0);
   const [groupName, setGroupName] = useState<string>('');
@@ -46,7 +49,16 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
 
   const handleClose = () => setOpen(false);
   const onDoneClick = () => {
-    navigate(`/group/123`);
+    const groupData = {
+      id: uuidv4(),
+      groupName,
+      members,
+    };
+    dispatch({
+      type: 'SET_GROUP_INFO',
+      payload: groupData,
+    });
+    navigate(`/group/${groupData.id}`);
   };
 
   const handlePrevClick = () => {
@@ -71,6 +83,7 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
     const newMember = {
       id: uuidv4(),
       name: memberText,
+      share: 0,
     };
     setMembers((prev) => [...prev, newMember]);
     setMemberText('');

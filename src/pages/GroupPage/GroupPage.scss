@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Quando&family=Righteous&display=swap');
+.group-page-wrapper {
+  .navbar-container {
+    margin: 0 0;
+    width: 100%;
+    .header {
+      color: #e0e0e2;
+      font-family: Righteous;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 29px;
+      span {
+        color: #41b4a5;
+      }
+    }
+  }
+  .group-page-container {
+    padding: 10px;
+    .group-page-header {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}
