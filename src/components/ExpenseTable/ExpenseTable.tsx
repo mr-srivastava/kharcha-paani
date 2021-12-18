@@ -1,6 +1,8 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
 
+import './ExpenseTable.scss';
+
 function ExpenseTable({ groupInfo }: any) {
   return (
     <div>

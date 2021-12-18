@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Button,
   CloseButton,
+  Form,
   FormControl,
   InputGroup,
   ListGroup,
@@ -23,7 +24,7 @@ import {
   IoInformationCircleOutline,
 } from 'react-icons/io5';
 import { useAppDispatch } from '../../state/stateHooks';
-import { currencies } from '../../utils';
+import { currencies, formatCurrency } from '../../utils';
 
 import './CreateGroup.scss';
 
@@ -114,6 +115,15 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
             }}
           />
         </InputGroup>
+        <Form.Select
+          aria-label="Default select example"
+          className="currency-select"
+          defaultValue={'Indian rupee (\u20B9)'}
+        >
+          {currencies.map((curr) => (
+            <option>{formatCurrency(curr)}</option>
+          ))}
+        </Form.Select>
       </>
     );
   };
