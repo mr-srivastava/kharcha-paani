@@ -36,7 +36,7 @@ function GroupPage() {
           <ExpenseTable groupInfo={groupInfo} />
         </div>
       </div>
-      <AddExpense show={show} handleClose={handleClose} />
+      <AddExpense show={show} handleClose={handleClose} groupInfo={groupInfo} />
     </div>
   );
 }

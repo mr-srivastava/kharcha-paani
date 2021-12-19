@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import {
+  Alert,
   Button,
   CloseButton,
   Form,
@@ -156,12 +157,12 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
             Add
           </Button>
         </InputGroup>
-        <div className="add-member-note">
+        <Alert className="add-member-note" variant='warning'>
           <IoInformationCircleOutline />
           <div className="add-member-note-text">
             Add atleast one member in the group
           </div>
-        </div>
+        </Alert>
         <ListGroup>
           {members.map((mem) => (
             <ListGroup.Item key={mem.id} className="member-list-wrap">

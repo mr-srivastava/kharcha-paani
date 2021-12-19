@@ -7,3 +7,22 @@
     justify-content: end;
   }
 }
+
+.select-paid-by {
+  .member-list-wrap {
+    margin-bottom: 10px;
+    .member-list-item {
+      margin-bottom: 10px;
+      .member-wrap {
+        display: flex;
+        span {
+          margin-left: 7px;
+        }
+      }
+    }
+  }
+  .add-paidBy-btn {
+    display: flex;
+    justify-content: end;
+  }
+}
