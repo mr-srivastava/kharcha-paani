@@ -157,13 +157,13 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
             Add
           </Button>
         </InputGroup>
-        <Alert className="add-member-note" variant='warning'>
+        <Alert className="add-member-note" variant="warning">
           <IoInformationCircleOutline />
           <div className="add-member-note-text">
             Add atleast one member in the group
           </div>
         </Alert>
-        <ListGroup>
+        <ListGroup className="member-group-wrap">
           {members.map((mem) => (
             <ListGroup.Item key={mem.id} className="member-list-wrap">
               <div className="member-list-item">
@@ -190,6 +190,7 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
       <Modal
         show={open}
         dialogClassName="create-group-modal"
+        contentClassName={classNames({ 'custom-height': page === 1 })}
         onHide={handleClose}
         backdrop="static"
         keyboard={false}

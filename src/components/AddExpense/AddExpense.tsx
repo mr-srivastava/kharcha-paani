@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import {
   Button,
   FloatingLabel,
@@ -8,23 +9,32 @@ import {
   ListGroup,
   Offcanvas,
 } from 'react-bootstrap';
+import { useAppDispatch } from 'src/state/stateHooks';
 
 import './AddExpense.scss';
 
 function AddExpense({ show, handleClose, groupInfo }: any) {
+  const dispatch = useAppDispatch();
+
   const [expenseName, setExpenseName] = useState<string>('');
   const [amount, setAmount] = useState<number | null>(null);
+  const [members, setMembers] = useState<any[]>([]);
   const [paidBy, setPaidBy] = useState<any[]>([]);
   const [sharedBy, setSharedBy] = useState<any[]>([]);
   const [showSelectPaidBy, setShowSelectPaidBy] = useState<boolean>(false);
-  const [showSelectMultiplePaidBy, setShowSelectMultiplePaidBy] =
-    useState<boolean>(false);
   const [showSelectSharedBy, setShowSelectSharedBy] = useState<boolean>(false);
   const [disableAdd, setDisableAdd] = useState<boolean>(true);
 
   useEffect(() => {
+    const memberState = groupInfo.members.map((mem: any) => {
+      return { ...mem, hasPaid: false, hasShare: false };
+    });
+    setMembers(memberState);
+  }, [show]);
+
+  useEffect(() => {
     const hasName = expenseName !== '';
-    const hasAmount = amount !== 0;
+    const hasAmount = !!amount;
     setDisableAdd(!(hasName && hasAmount));
   }, [expenseName, amount, paidBy, sharedBy]);
 
@@ -35,26 +45,59 @@ function AddExpense({ show, handleClose, groupInfo }: any) {
 
   const handleAmountChange = (e: any) => {
     e.preventDefault();
-    setAmount(e.target.value);
+    setAmount(parseInt(e.target.value));
+  };
+
+  const handlePaidBySelect = (e: any, mem: any) => {
+    setMembers((prevState) => {
+      const nextState = prevState.map((el) => {
+        if (el.id === mem.id) {
+          el.hasPaid = e.target.checked;
+        }
+        return el;
+      });
+      return nextState;
+    });
+  };
+
+  const handleSharedBySelect = (e: any, mem: any) => {
+    setMembers((prevState) => {
+      const nextState = prevState.map((el) => {
+        if (el.id === mem.id) {
+          el.hasShare = e.target.checked;
+        }
+        return el;
+      });
+      return nextState;
+    });
   };
 
   const handleAddPaidBy = () => {
-    setShowSelectMultiplePaidBy(false);
+    setPaidBy(members.filter((mem) => mem.hasPaid));
     setShowSelectPaidBy(false);
   };
 
   const handleAddSharedBy = () => {
+    setSharedBy(members.filter((mem) => mem.hasShare));
     setShowSelectSharedBy(false);
   };
 
   const handleSubmit = () => {
     const payload = {
+      id: uuidv4(),
       name: expenseName,
       amount,
       paidBy,
       sharedBy,
     };
-    console.log('EXPENSE: ', payload);
+    dispatch({
+      type: 'ADD_EXPENSE',
+      payload,
+    });
+    setExpenseName('');
+    setAmount(null);
+    setPaidBy([]);
+    setSharedBy([]);
     handleClose();
   };
 
@@ -101,6 +144,7 @@ function AddExpense({ show, handleClose, groupInfo }: any) {
                         value={amount || 0}
                         placeholder="Enter amount."
                         onChange={handleAmountChange}
+                        type="number"
                         aria-label="Default"
                         aria-describedby="inputGroup-sizing-default"
                       />
@@ -113,6 +157,15 @@ function AddExpense({ show, handleClose, groupInfo }: any) {
                   <div className="expense-made-by">
                     <InputGroup className="mb-3">
                       <FormControl
+                        value={
+                          paidBy.length
+                            ? `${paidBy[0].name} ${
+                                paidBy.length > 1
+                                  ? `+ ${paidBy.length - 1}`
+                                  : ''
+                              } `
+                            : ''
+                        }
                         placeholder="Select members"
                         aria-label="Default"
                         aria-describedby="inputGroup-sizing-default"
@@ -130,6 +183,15 @@ function AddExpense({ show, handleClose, groupInfo }: any) {
                   <div className="expense-shared-by">
                     <InputGroup className="mb-3">
                       <FormControl
+                        value={
+                          sharedBy.length
+                            ? `${sharedBy[0].name} ${
+                                sharedBy.length > 1
+                                  ? `+ ${sharedBy.length - 1}`
+                                  : ''
+                              } `
+                            : ''
+                        }
                         placeholder="Select members"
                         aria-label="Default"
                         aria-describedby="inputGroup-sizing-default"
@@ -169,22 +231,18 @@ function AddExpense({ show, handleClose, groupInfo }: any) {
           {showSelectPaidBy && (
             <div className="select-paid-by">
               <ListGroup className="member-list-wrap">
-                {groupInfo.members.map((mem: any) => (
-                  <ListGroup.Item key={mem.id} className=" member-list-item">
+                {members.map((mem: any) => (
+                  <ListGroup.Item key={mem.id} className="member-list-item">
                     <div className="member-wrap">
-                      {showSelectMultiplePaidBy && <Form.Check />}
+                      <Form.Check
+                        onChange={(e) => handlePaidBySelect(e, mem)}
+                      />
                       <span>{mem.name}</span>
                     </div>
                   </ListGroup.Item>
                 ))}
-                {!showSelectMultiplePaidBy && (
-                  <ListGroup.Item
-                    onClick={() => setShowSelectMultiplePaidBy(true)}
-                  >
-                    Multiple
-                  </ListGroup.Item>
-                )}
               </ListGroup>
+
               <div className="add-paidBy-btn">
                 <Button onClick={handleAddPaidBy}>Done</Button>
               </div>
@@ -192,7 +250,7 @@ function AddExpense({ show, handleClose, groupInfo }: any) {
           )}
 
           {showSelectSharedBy && (
-            <div className="select-paid-by">
+            <div className="select-shared-by">
               <ListGroup className="member-list-wrap">
                 <ListGroup.Item
                   className=" member-list-item"
@@ -203,7 +261,10 @@ function AddExpense({ show, handleClose, groupInfo }: any) {
                 {groupInfo.members.map((mem: any) => (
                   <ListGroup.Item key={mem.id} className=" member-list-item">
                     <div className="member-wrap">
-                      <Form.Check />
+                      <Form.Check
+                        onChange={(e) => handleSharedBySelect(e, mem)}
+                        checked={mem.hasShare}
+                      />
                       <span>{mem.name}</span>
                     </div>
                   </ListGroup.Item>

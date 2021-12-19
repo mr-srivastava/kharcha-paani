@@ -5,7 +5,7 @@ import './ExpenseTable.scss';
 
 function ExpenseTable({ groupInfo }: any) {
   return (
-    <div>
+    <div className="expense-table-wrapper">
       <Table hover size="sm">
         <thead>
           <tr>
