@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Navbar, Container, Button } from 'react-bootstrap';
+import { useState } from 'react';
+import { Button } from 'react-bootstrap';
 import { useAppSelector } from '../../state/stateHooks';
-import { AddExpense, ExpenseTable } from 'src/components';
+import { AddExpense, ExpenseTable, NavBar } from 'src/components';
 
 import './GroupPage.scss';
 
@@ -15,15 +15,7 @@ function GroupPage() {
 
   return (
     <div className="group-page-wrapper">
-      <Navbar bg="dark">
-        <Container className="navbar-container">
-          <Navbar.Brand href="/">
-            <div className="header">
-              <span>Kharcha</span>Paani
-            </div>
-          </Navbar.Brand>
-        </Container>
-      </Navbar>
+      <NavBar />
       <div className="group-page-container">
         <div className="group-page-header">
           <h1 className="group-name">Group : {groupInfo.name}</h1>

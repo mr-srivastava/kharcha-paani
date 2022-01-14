@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Quando&family=Righteous&display=swap');
 .wrapper {
-  width: 1440px;
-  height: 1080px;
   .background-shape {
     position: absolute;
     z-index: -1;
@@ -10,20 +8,6 @@
     background: #213445;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 0px 0px 492px 0px;
-  }
-  .header {
-    position: absolute;
-    margin-top: 20px;
-    color: #e0e0e2;
-    left: 1171px;
-    font-family: Righteous;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 29px;
-    line-height: 36px;
-    span {
-      color: #41b4a5;
-    }
   }
   .content {
     padding-left: 40px;
@@ -64,13 +48,16 @@
     line-height: 30px;
     border: #e0e0e2 1px solid;
     color: #e0e0e2;
-    &:hover {
+    &:hover,
+    &:focus {
       border: #41b4a5 1px solid;
       color: #41b4a5;
+      background-color: transparent;
+      box-shadow: unset;
     }
   }
 
-  img {
+  .wallet-img {
     position: absolute;
     height: 446px;
     width: 690px;

@@ -1,0 +1,18 @@
+.navbar-wrapper {
+  background: #213445;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  .navbar-container {
+    margin: 0 0;
+    width: 100%;
+    .header {
+      color: #e0e0e2;
+      font-family: Righteous;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 29px;
+      span {
+        color: #41b4a5;
+      }
+    }
+  }
+}
