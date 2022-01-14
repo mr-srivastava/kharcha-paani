@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import classNames from 'classnames';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
@@ -122,7 +122,7 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
           defaultValue={'Indian rupee (\u20B9)'}
         >
           {currencies.map((curr) => (
-            <option>{formatCurrency(curr)}</option>
+            <option key={curr.cc}>{formatCurrency(curr)}</option>
           ))}
         </Form.Select>
       </>

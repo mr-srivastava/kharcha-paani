@@ -3,7 +3,7 @@ import { Table } from 'react-bootstrap';
 
 import './ExpenseTable.scss';
 
-function ExpenseTable({ groupInfo }: any) {
+function ExpenseTable({ group }: any) {
   return (
     <div className="expense-table-wrapper">
       <Table hover size="sm">
@@ -14,14 +14,15 @@ function ExpenseTable({ groupInfo }: any) {
           </tr>
         </thead>
         <tbody>
-          {groupInfo.members.map((mem: any) => {
-            return (
-              <tr>
-                <td>{mem.name}</td>
-                <td>{mem.share}</td>
-              </tr>
-            );
-          })}
+          {group.members.length &&
+            group.members.map((mem: any) => {
+              return (
+                <tr key={mem.id}>
+                  <td>{mem.name}</td>
+                  <td>{mem.share}</td>
+                </tr>
+              );
+            })}
         </tbody>
       </Table>
     </div>

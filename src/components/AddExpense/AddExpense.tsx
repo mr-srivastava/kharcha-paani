@@ -13,7 +13,7 @@ import { useAppDispatch } from 'src/state/stateHooks';
 
 import './AddExpense.scss';
 
-function AddExpense({ show, handleClose, groupInfo }: any) {
+function AddExpense({ show, handleClose, group }: any) {
   const dispatch = useAppDispatch();
 
   const [expenseName, setExpenseName] = useState<string>('');
@@ -26,7 +26,7 @@ function AddExpense({ show, handleClose, groupInfo }: any) {
   const [disableAdd, setDisableAdd] = useState<boolean>(true);
 
   useEffect(() => {
-    const memberState = groupInfo.members.map((mem: any) => {
+    const memberState = group.members.map((mem: any) => {
       return { ...mem, hasPaid: false, hasShare: false };
     });
     setMembers(memberState);
@@ -258,7 +258,7 @@ function AddExpense({ show, handleClose, groupInfo }: any) {
                 >
                   Select All
                 </ListGroup.Item>
-                {groupInfo.members.map((mem: any) => (
+                {group.members.map((mem: any) => (
                   <ListGroup.Item key={mem.id} className=" member-list-item">
                     <div className="member-wrap">
                       <Form.Check

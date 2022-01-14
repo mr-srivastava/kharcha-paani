@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import './LandingPage.scss';
-import walletImg from '../../assets/wallet.svg';
-import { Button, Image } from 'react-bootstrap';
+import walletImg from '../../assets/images/wallet.svg';
+import { Button, ButtonGroup, Image } from 'react-bootstrap';
 import { CreateGroup, NavBar } from 'src/components';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = (props: any) => {
+  const navigate = useNavigate();
   const [openModal, setOpenModal] = useState<boolean>(false);
   return (
     <>
@@ -21,11 +23,16 @@ const LandingPage = (props: any) => {
             KharchaPaani will show you who owes what to whom and how much they
             owe.
           </div>
-          <Button className="cta-btn" onClick={() => setOpenModal(true)}>
-            CREATE A GROUP
-          </Button>
+          <ButtonGroup aria-label="Landing Button Group">
+            <Button className="cta-btn" onClick={() => setOpenModal(true)}>
+              CREATE A GROUP
+            </Button>
+            <Button className="cta-btn" onClick={() => navigate(`/groups`)}>
+              VIEW GROUPS
+            </Button>
+          </ButtonGroup>
         </div>
-        <Image className= 'wallet-img' src={walletImg} fluid />
+        <Image className="wallet-img" src={walletImg} fluid />
       </div>
 
       {openModal && (

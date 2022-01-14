@@ -1,0 +1,18 @@
+.card-wrapper {
+  .card-element {
+    .link-div {
+      cursor: pointer;
+      .link-to-group-hover {
+        display: none;
+      }
+      &:hover {
+        .link-to-group {
+          display: none;
+        }
+        .link-to-group-hover {
+          display: unset;
+        }
+      }
+    }
+  }
+}
