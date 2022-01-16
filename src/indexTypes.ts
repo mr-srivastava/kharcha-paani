@@ -12,6 +12,7 @@ interface Group {
 
 interface Expense {
   id: string;
+  groupId: string;
   name: string;
   amount: number;
   paidBy: any[];

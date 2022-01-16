@@ -1,5 +1,5 @@
-import { Group, Expense } from "src/indexTypes";
-import { addGroupToLS } from "src/utils";
+import { Group, Expense } from 'src/indexTypes';
+import { addToLS, getItems, updateToLS } from 'src/utils';
 
 interface InitialState {
   groups: Group[];
@@ -12,18 +12,35 @@ const initialState: InitialState = {
 };
 
 const GroupReducer = (state = initialState, action: any) => {
-  switch (action.type) {
-    case 'SET_GROUP_INFO':
-      const newGroup: Group = {
-        id: action.payload.id,
-        name: action.payload.groupName,
-        members: action.payload.members,
-      };
-      addGroupToLS(newGroup)
-      return { ...state, groups: [...state.groups, newGroup] };
-    case 'ADD_EXPENSE':
+  const { payload, type } = action;
+  switch (type) {
+    case 'SET_APP_STATE':
       return {
         ...state,
+        groups: getItems('groups'),
+        expenses: getItems('expenses'),
+      };
+    case 'ADD_GROUP':
+      const newGroup: Group = {
+        id: payload.id,
+        name: payload.groupName,
+        members: payload.members,
+      };
+      const newGroups = addToLS(newGroup, 'groups');
+      return { ...state, groups: newGroups };
+    case 'UPDATE_GROUP':
+      const updatedGroup: Group = {
+        id: payload.id,
+        name: payload.groupName,
+        members: payload.members,
+      };
+      const updatedGroups = updateToLS(updatedGroup, 'groups');
+      return { ...state, groups: updatedGroups };
+    case 'ADD_EXPENSE':
+      const newExpenses = updateToLS(payload, 'expenses');
+      return {
+        ...state,
+        expenses: newExpenses,
         // members: state.members.map((mem: any) => {
         //   const paid = action.payload.paidBy.find((m: any) => m.id === mem.id)
         //     ? Math.round(action.payload.amount / action.payload.paidBy.length)

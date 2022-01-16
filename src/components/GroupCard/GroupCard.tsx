@@ -1,11 +1,11 @@
 import { Card } from 'react-bootstrap';
-import { IoExitOutline } from 'react-icons/io5';
+import { IoOpenOutline, IoOptionsOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import './GroupCard.scss';
 
 function GroupCard(props: any) {
   const navigate = useNavigate();
-  const { data } = props;
+  const { data, handleEditClick } = props;
   const onLinkClick = () => {
     navigate(`/group/${data.id}`);
   };
@@ -15,9 +15,24 @@ function GroupCard(props: any) {
         <Card.Body>
           <Card.Title className="d-flex justify-content-between">
             <div className="card-title">{data.name}</div>
-            <div className="link-div" onClick={onLinkClick}>
-              <IoExitOutline className="link-to-group" />
-              <IoExitOutline className="link-to-group-hover" stroke="#41b4a5" />
+            <div className="card-title-btns d-flex">
+              <div
+                className="edit-div"
+                onClick={() => handleEditClick(data.id)}
+              >
+                <IoOptionsOutline className="edit-group" />
+                <IoOptionsOutline
+                  className="edit-group-hover"
+                  stroke="#41b4a5"
+                />
+              </div>
+              <div className="link-div" onClick={onLinkClick}>
+                <IoOpenOutline className="link-to-group" />
+                <IoOpenOutline
+                  className="link-to-group-hover"
+                  stroke="#41b4a5"
+                />
+              </div>
             </div>
           </Card.Title>
 

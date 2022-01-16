@@ -1,12 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Quando&family=Righteous&display=swap');
 .group-page-wrapper {
-
   .group-page-container {
     padding: 10px;
     .group-page-header {
-      display: flex;
-      justify-content: space-between;
       margin-bottom: 10px;
+      .add-exp-btn {
+        background-color: #41b4a5;
+        border-color: #41b4a5;
+        &:hover {
+          opacity: 0.9;
+        }
+      }
     }
   }
 }

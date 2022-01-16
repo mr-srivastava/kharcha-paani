@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
@@ -28,10 +28,13 @@ import { useAppDispatch } from '../../state/stateHooks';
 import { currencies, formatCurrency } from '../../utils';
 
 import './CreateGroup.scss';
+import { Group } from 'src/indexTypes';
 
 type CreateGroupProps = {
+  edit?: boolean;
   open: boolean;
   setOpen: Function;
+  data?: Group;
 };
 
 type Member = {
@@ -40,7 +43,7 @@ type Member = {
   share: number;
 };
 
-function CreateGroup({ open, setOpen }: CreateGroupProps) {
+function CreateGroup({ open, setOpen, data, edit }: CreateGroupProps) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -49,18 +52,38 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
   const [memberText, setMemberText] = useState<string>('');
   const [members, setMembers] = useState<Member[]>([]);
 
+  useEffect(() => {
+    if (data) {
+      setGroupName(data.name);
+      setMembers(data.members);
+    }
+  }, [data]);
+
   const handleClose = () => setOpen(false);
   const onDoneClick = () => {
-    const groupData = {
-      id: uuidv4(),
-      groupName,
-      members,
-    };
-    dispatch({
-      type: 'SET_GROUP_INFO',
-      payload: groupData,
-    });
-    navigate(`/group/${groupData.id}`);
+    if (!edit) {
+      const groupData = {
+        id: uuidv4(),
+        groupName,
+        members,
+      };
+      dispatch({
+        type: 'ADD_GROUP',
+        payload: groupData,
+      });
+      navigate(`/group/${groupData.id}`);
+    } else {
+      const groupData = {
+        id: data ? data.id : uuidv4(),
+        groupName,
+        members,
+      };
+      dispatch({
+        type: 'UPDATE_GROUP',
+        payload: groupData,
+      });
+    }
+    handleClose();
   };
 
   const handlePrevClick = () => {
@@ -73,7 +96,7 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
 
   const handleGroupNameChange = (e: any) => {
     e.preventDefault();
-    setGroupName(e.target.value.trim());
+    setGroupName(e.target.value);
   };
 
   const handleMemberTextChange = (e: any) => {
@@ -211,7 +234,7 @@ function CreateGroup({ open, setOpen }: CreateGroupProps) {
           {page !== 1 && (
             <div
               className={classNames('next-step', {
-                disabled: page === 0 && groupName === '',
+                disabled: page === 0 && groupName.trim() === '',
               })}
               onClick={handleNextClick}
             >

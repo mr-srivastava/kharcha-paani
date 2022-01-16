@@ -1,16 +1,34 @@
 .card-wrapper {
   .card-element {
-    .link-div {
-      cursor: pointer;
-      .link-to-group-hover {
-        display: none;
-      }
-      &:hover {
-        .link-to-group {
+    .card-title-btns {
+      .edit-div {
+        cursor: pointer;
+        margin-right: 5px;
+        .edit-group-hover {
           display: none;
         }
+        &:hover {
+          .edit-group {
+            display: none;
+          }
+          .edit-group-hover {
+            display: unset;
+          }
+        }
+      }
+
+      .link-div {
+        cursor: pointer;
         .link-to-group-hover {
-          display: unset;
+          display: none;
+        }
+        &:hover {
+          .link-to-group {
+            display: none;
+          }
+          .link-to-group-hover {
+            display: unset;
+          }
         }
       }
     }

@@ -30,17 +30,17 @@ function AddExpense({ show, handleClose, group }: any) {
       return { ...mem, hasPaid: false, hasShare: false };
     });
     setMembers(memberState);
-  }, [show]);
+  }, [group.members, show]);
 
   useEffect(() => {
-    const hasName = expenseName !== '';
+    const hasName = expenseName.trim() !== '';
     const hasAmount = !!amount;
     setDisableAdd(!(hasName && hasAmount));
   }, [expenseName, amount, paidBy, sharedBy]);
 
   const handleNameChange = (e: any) => {
     e.preventDefault();
-    setExpenseName(e.target.value.trim());
+    setExpenseName(e.target.value);
   };
 
   const handleAmountChange = (e: any) => {
@@ -85,15 +85,17 @@ function AddExpense({ show, handleClose, group }: any) {
   const handleSubmit = () => {
     const payload = {
       id: uuidv4(),
+      groupId: group.id,
       name: expenseName,
       amount,
       paidBy,
       sharedBy,
     };
-    dispatch({
-      type: 'ADD_EXPENSE',
-      payload,
-    });
+    // dispatch({
+    //   type: 'ADD_EXPENSE',
+    //   payload,
+    // });
+    console.log(payload);
     setExpenseName('');
     setAmount(null);
     setPaidBy([]);
@@ -252,12 +254,6 @@ function AddExpense({ show, handleClose, group }: any) {
           {showSelectSharedBy && (
             <div className="select-shared-by">
               <ListGroup className="member-list-wrap">
-                <ListGroup.Item
-                  className=" member-list-item"
-                  onClick={() => console.log('Select all')}
-                >
-                  Select All
-                </ListGroup.Item>
                 {group.members.map((mem: any) => (
                   <ListGroup.Item key={mem.id} className=" member-list-item">
                     <div className="member-wrap">
