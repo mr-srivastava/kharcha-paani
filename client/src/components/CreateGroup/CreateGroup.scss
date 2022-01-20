@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Quando&family=Righteous&display=swap');
+
+.create-group-modal-wrapper {
+  font-family: Quando;
+}
+
+.create-group-modal {
+  .group-name-input {
+    width: 50%;
+  }
+  .currency-dropdown {
+    .currency-menu,
+    .dropdown-menu {
+      height: 200px;
+      overflow-y: overlay;
+    }
+  }
+  .custom-height {
+    height: 500px;
+  }
+  .add-member-note {
+    display: flex;
+    align-items: center;
+    .add-member-note-text {
+      font-size: 14px;
+      margin-left: 5px;
+    }
+  }
+  .member-group-wrap {
+    height: 206px;
+    overflow: auto;
+    .member-list-wrap {
+      &:hover {
+        background-color: #b5bad07e;
+      }
+      .member-list-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .member-wrap {
+          display: flex;
+          align-items: center;
+          span {
+            margin-left: 5px;
+          }
+        }
+        .member-remove {
+          justify-self: end;
+        }
+      }
+    }
+  }
+}
+
+.prev-step {
+  cursor: pointer;
+  .back-icon,
+  .back-icon-hover {
+    font-size: 32px;
+  }
+  .back-icon-hover {
+    display: none;
+  }
+  &:hover {
+    .back-icon {
+      display: none;
+    }
+    .back-icon-hover {
+      display: unset;
+    }
+  }
+}
+
+.next-step {
+  cursor: pointer;
+  .next-icon,
+  .next-icon-hover {
+    font-size: 32px;
+  }
+  .next-icon-hover {
+    display: none;
+  }
+  &:hover {
+    .next-icon {
+      display: none;
+    }
+    .next-icon-hover {
+      display: unset;
+    }
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+}
+
+.confirm-step {
+  cursor: pointer;
+  .confirm-icon,
+  .confirm-icon-hover {
+    font-size: 32px;
+  }
+  .confirm-icon-hover {
+    display: none;
+  }
+  &:hover {
+    .confirm-icon {
+      display: none;
+    }
+    .confirm-icon-hover {
+      display: unset;
+    }
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+}
