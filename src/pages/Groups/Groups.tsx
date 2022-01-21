@@ -48,6 +48,9 @@ function Groups() {
           <>
             <div className="heading d-flex justify-content-between align-items-center">
               <h1 className="heading-text">GROUPS</h1>
+              <Button className="create-btn" onClick={() => setOpenModal(true)}>
+                Create
+              </Button>
             </div>
             <hr />
             {groups && groups.length ? (
