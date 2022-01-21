@@ -21,8 +21,7 @@ const LandingPage = (props: any) => {
             <div className="description">
               There will be no more fussing with change, misplaced receipts, or
               arguments about the amount. Simply enter all of your spending, and
-              KharchaPaani will show you who owes what to whom and how much they
-              owe.
+              KharchaPaani will show you how mouch each person owes and to whom.
             </div>
             <ButtonGroup aria-label="Landing Button Group">
               <Button className="cta-btn" onClick={() => setOpenModal(true)}>

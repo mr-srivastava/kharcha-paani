@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { AddExpense, ExpenseTable, NavBar } from 'src/components';
+import { AddExpense, ExpenseTable, NavBar, PageLoader } from 'src/components';
 
 import './GroupPage.scss';
 import { getGroupIdFromUrl, formatCurrency, getTotal } from 'src/utils';
@@ -14,11 +14,13 @@ function GroupPage() {
   const [group, setGroup] = useState<Group>();
   const [total, setTotal] = useState<number>(0);
   const [show, setShow] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     async function getGroupById(groupId: string) {
+      setLoading(true);
       const response = new Promise((resolve, reject) => {
         dispatch({
           type: 'GET_GROUP_BY_ID',
@@ -28,6 +30,7 @@ function GroupPage() {
         });
       });
       const groupResp: any = await response;
+      setLoading(false);
       setGroup(groupResp);
     }
 
@@ -44,7 +47,8 @@ function GroupPage() {
   return (
     <div className="group-page-wrapper">
       <NavBar showIcon />
-      {group && (
+      {loading && <PageLoader page="Group" />}
+      {group && !loading && (
         <>
           <div className="group-page-container">
             <div className="group-page-header d-flex justify-content-between">

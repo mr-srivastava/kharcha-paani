@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Image } from 'react-bootstrap';
-import { GroupModal, NavBar } from 'src/components';
+import { GroupModal, NavBar, PageLoader } from 'src/components';
 import { GroupCard } from 'src/components';
 import { Group } from 'src/indexTypes';
 import { useAppDispatch } from 'src/state/stateHooks';
@@ -44,6 +44,7 @@ function Groups() {
     <div className="groups-wrapper">
       <NavBar showIcon />
       <div className="groups-container">
+        {loading && <PageLoader page="Groups" />}
         {!loading && (
           <>
             <div className="heading d-flex justify-content-between align-items-center">
