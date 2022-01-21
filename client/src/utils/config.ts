@@ -1,6 +1,6 @@
 export const API_URL: { [key: string]: string } = {
   development: 'http://localhost:5000',
-  production: 'https://kharcha-paani.herokuapp.com/',
+  production: 'https://kharcha-paani.herokuapp.com',
 };
 
 export const getEnv = (): string => {
