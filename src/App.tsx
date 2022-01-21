@@ -1,8 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { LandingPage, GroupPage } from './pages';
-import { Groups } from './pages/Groups';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { LandingPage, GroupPage } from "./pages";
+import { Groups } from "./pages/Groups";
 
-import './App.scss';
+import "./App.scss";
 
 const App = () => {
   return (

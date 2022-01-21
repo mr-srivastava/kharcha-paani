@@ -1,1 +1,1 @@
-export { ExpenseTable } from './ExpenseTable';
+export { ExpenseTable } from "./ExpenseTable";
