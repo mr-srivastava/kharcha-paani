@@ -11,6 +11,9 @@ const App = () => {
 
   useEffect(() => {
     dispatch({
+      type: 'GET_ALL_GROUPS',
+    });
+    dispatch({
       type: 'SET_APP_STATE',
     });
   }, []);

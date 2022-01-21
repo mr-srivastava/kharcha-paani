@@ -38,4 +38,11 @@ const getTotal = (id: string, expenses: Expense[]) => {
   return sum(groupExpenses);
 };
 
-export { formatCurrency, getGroupIdFromUrl, getItems, addToLS, updateToLS, getTotal };
+export {
+  formatCurrency,
+  getGroupIdFromUrl,
+  getItems,
+  addToLS,
+  updateToLS,
+  getTotal,
+};
