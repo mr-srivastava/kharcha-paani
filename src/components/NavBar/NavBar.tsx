@@ -22,9 +22,6 @@ function NavBar(props: any) {
         <Nav>
           <Nav.Link href="/">Home</Nav.Link>
           <Nav.Link href="/groups">Groups</Nav.Link>
-          {/* <Nav.Link className="text-white" href="#pricing">
-            Pricing
-          </Nav.Link> */}
         </Nav>
       </Container>
     </Navbar>
