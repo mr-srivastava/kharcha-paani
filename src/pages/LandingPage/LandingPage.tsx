@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './LandingPage.scss';
 import walletImg from '../../assets/images/wallet.svg';
 import { Button, ButtonGroup, Image, Stack } from 'react-bootstrap';
-import { CreateGroup, NavBar } from 'src/components';
+import { GroupModal, NavBar } from 'src/components';
 import { useNavigate } from 'react-router-dom';
 
 const LandingPage = (props: any) => {
@@ -39,7 +39,7 @@ const LandingPage = (props: any) => {
 
       {openModal && (
         <div className="create-group">
-          <CreateGroup open={openModal} setOpen={setOpenModal} />
+          <GroupModal open={openModal} setOpen={setOpenModal} />
         </div>
       )}
     </>

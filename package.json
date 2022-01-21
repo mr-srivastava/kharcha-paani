@@ -42,12 +42,6 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
-  "eslintConfig": {
-    "extends": [
-      "eslint:recommended",
-      "plugin:react/recommended"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -61,9 +55,6 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.178",
-    "eslint": "^8.7.0",
-    "eslint-plugin-react": "^7.28.0",
-    "eslint-plugin-unused-imports": "^2.0.0"
+    "@types/lodash": "^4.14.178"
   }
 }

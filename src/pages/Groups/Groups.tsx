@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Image } from 'react-bootstrap';
-import { CreateGroup, NavBar } from 'src/components';
+import { GroupModal, NavBar } from 'src/components';
 import { GroupCard } from 'src/components';
 import { Group } from 'src/indexTypes';
 import { useAppDispatch } from 'src/state/stateHooks';
@@ -79,12 +79,12 @@ function Groups() {
       </div>
       {openModal && (
         <div className="create-group">
-          <CreateGroup open={openModal} setOpen={setOpenModal} />
+          <GroupModal open={openModal} setOpen={setOpenModal} />
         </div>
       )}
       {openEditModal && (
         <div className="create-group">
-          <CreateGroup
+          <GroupModal
             edit
             open={openEditModal}
             setOpen={setOpenEditModal}

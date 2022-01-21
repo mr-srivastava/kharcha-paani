@@ -1,5 +1,6 @@
 export const API_URL: { [key: string]: string } = {
-  development: 'http://localhost:5000',
+  // development: 'http://localhost:5000',
+  development: 'https://kharcha-paani.herokuapp.com',
   production: 'https://kharcha-paani.herokuapp.com',
 };
 

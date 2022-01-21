@@ -1,3 +1,5 @@
+@import '../../assets/styles/colors';
+
 .card-wrapper {
   .card-element {
     max-width: 300px;
@@ -5,7 +7,7 @@
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     border-radius: 1rem;
     .card-body {
-      background: #213445;
+      background: $color-blue-1;
       border-radius: 1rem;
       color: white;
     }
@@ -21,7 +23,7 @@
           content: none;
         }
         &:hover {
-          color: #41b4a5;
+          color: $color-green-1;
         }
       }
     }
