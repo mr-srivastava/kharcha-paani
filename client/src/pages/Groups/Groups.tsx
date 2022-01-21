@@ -1,17 +1,36 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Col, Image, Row } from 'react-bootstrap';
 import { CreateGroup, NavBar } from 'src/components';
 import { GroupCard } from 'src/components';
 import { Group } from 'src/indexTypes';
-import { useAppSelector } from 'src/state/stateHooks';
+import { useAppDispatch, useAppSelector } from 'src/state/stateHooks';
 import NullImg from 'src/assets/images/groups_null.svg';
 import './Groups.scss';
 
 function Groups() {
-  const { groups } = useAppSelector((state) => state.group);
+  // const { groups } = useAppSelector((state) => state.group);
+  const [groups, setGroups] = useState<any>();
   const [editId, setEditId] = useState<string>('');
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    async function getGroups() {
+      const response = new Promise((resolve, reject) => {
+        dispatch({
+          type: 'GET_ALL_GROUPS',
+          resolve,
+          reject,
+        });
+      });
+      const { groups }: any = await response;
+      setGroups(groups);
+    }
+
+    getGroups();
+  }, []);
 
   const handleEditClick = (id: string) => {
     setEditId(id);

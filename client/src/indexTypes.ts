@@ -12,7 +12,7 @@ type Member = {
 };
 
 interface Group {
-  id: string;
+  _id: string;
   name: string;
   members: Member[];
 }

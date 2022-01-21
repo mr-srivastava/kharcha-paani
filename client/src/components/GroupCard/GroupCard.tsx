@@ -16,7 +16,7 @@ function GroupCard(props: GroupCardProps) {
   const navigate = useNavigate();
   const { data, handleEditClick } = props;
   const onLinkClick = () => {
-    navigate(`/group/${data.id}`);
+    navigate(`/group/${data._id}`);
   };
   return (
     <div className="card-wrapper">
@@ -27,7 +27,7 @@ function GroupCard(props: GroupCardProps) {
             <DropdownButton className="card-options" title="...">
               <Dropdown.Item
                 className="edit-div d-flex align-items-center"
-                onClick={() => handleEditClick(data.id)}
+                onClick={() => handleEditClick(data._id)}
               >
                 <IoOptionsOutline className="edit-group" />
                 <IoOptionsOutline
@@ -54,7 +54,7 @@ function GroupCard(props: GroupCardProps) {
           <div className="card-content">
             <div className="total-expenses">
               <div className="value">
-                {formatCurrency().format(getTotal(data.id, expenses))}
+                {formatCurrency().format(getTotal(data._id, expenses))}
               </div>
               <div className="heading">Total expenses</div>
             </div>

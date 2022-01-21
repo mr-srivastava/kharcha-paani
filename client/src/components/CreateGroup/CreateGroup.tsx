@@ -57,21 +57,27 @@ function CreateGroup({ open, setOpen, data, edit }: CreateGroupProps) {
   }, [data]);
 
   const handleClose = () => setOpen(false);
-  const onDoneClick = () => {
+
+  const onDoneClick = async () => {
     if (!edit) {
       const groupData = {
-        id: uuidv4(),
-        groupName,
+        name: groupName,
         members,
       };
-      dispatch({
-        type: 'ADD_GROUP',
-        payload: groupData,
+      const response: any = new Promise((resolve, reject) => {
+        dispatch({
+          type: 'ADD_GROUP',
+          payload: groupData,
+          resolve,
+          reject,
+        });
       });
-      navigate(`/group/${groupData.id}`);
+      const { id } = await response;
+      handleClose();
+      navigate(`/group/${id}`);
     } else {
       const groupData = {
-        id: data ? data.id : uuidv4(),
+        id: data ? data._id : uuidv4(),
         groupName,
         members,
       };

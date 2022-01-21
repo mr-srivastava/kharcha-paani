@@ -6,7 +6,7 @@ exports.createGroup = async (req, res) => {
     const { body } = req;
     const group = await Group.create(body);
     return res.status(200).json({
-      group,
+      id: group._id,
     });
   } catch (error) {
     return res.status(400).json({
@@ -31,10 +31,8 @@ exports.getGroups = async (req, res) => {
 exports.getGroupById = async (req, res) => {
   try {
     var id = mongoose.Types.ObjectId(req.params);
-    const group = await Group.find({ _id: id });
-    return res.status(200).json({
-      group,
-    });
+    const [group] = await Group.find({ _id: id });
+    return res.status(200).json(group);
   } catch (error) {
     return res.status(400).json({
       message: error.message,

@@ -4,14 +4,48 @@ import { getApiUrl } from 'src/utils';
 
 const API_BASE = getApiUrl();
 
-// worker Saga: will be fired on USER_FETCH_REQUESTED actions
-const getAllGroups = (): Promise<any> => {
+const getAllGroups = () => {
   return axios.get(`${API_BASE}/api/group/`);
 };
-function* getGroups(): Generator<any> {
+
+function* getGroups(action: any): Generator<any> {
   try {
-    const groups = yield call(getAllGroups);
-    console.log(groups);
+    const response: any = yield call(getAllGroups);
+    if (response.status === 200) {
+      action.resolve(response.data);
+    }
+    // yield put({ type: 'GET_ALL_GROUPS_SUCCESS', user: user });
+  } catch (e) {
+    // yield put({ type: 'GET_ALL_GROUPS_FAILURE', message: e.message });
+  }
+}
+
+const getGroupById = (id: string) => {
+  return axios.get(`${API_BASE}/api/group/${id}`);
+};
+
+function* getGroup(action: any): Generator<any> {
+  try {
+    const response: any = yield call(getGroupById, action.id);
+    if (response.status === 200) {
+      action.resolve(response.data);
+    }
+    // yield put({ type: 'GET_ALL_GROUPS_SUCCESS', user: user });
+  } catch (e) {
+    // yield put({ type: 'GET_ALL_GROUPS_FAILURE', message: e.message });
+  }
+}
+
+const createNewGroup = (payload: string) => {
+  return axios.post(`${API_BASE}/api/group/`, payload);
+};
+
+function* createGroup(action: any): Generator<any> {
+  try {
+    const response: any = yield call(createNewGroup, action.payload);
+    if (response.status === 200) {
+      action.resolve(response.data);
+    }
     // yield put({ type: 'GET_ALL_GROUPS_SUCCESS', user: user });
   } catch (e) {
     // yield put({ type: 'GET_ALL_GROUPS_FAILURE', message: e.message });
@@ -27,6 +61,8 @@ function* getGroups(): Generator<any> {
 */
 function* groupSaga() {
   yield takeLatest('GET_ALL_GROUPS', getGroups);
+  yield takeLatest('GET_GROUP_BY_ID', getGroup);
+  yield takeLatest('ADD_GROUP', createGroup);
 }
 
 export default groupSaga;

@@ -4,22 +4,35 @@ import { AddExpense, ExpenseTable, NavBar } from 'src/components';
 
 import './GroupPage.scss';
 import { getGroupIdFromUrl, formatCurrency, getTotal } from 'src/utils';
-import { useAppSelector } from 'src/state/stateHooks';
+import { useAppDispatch, useAppSelector } from 'src/state/stateHooks';
 import { Expense, Group } from 'src/indexTypes';
 
-
-
 function GroupPage() {
-  const { groups, expenses } = useAppSelector((state) => state.group);
+  const { expenses } = useAppSelector((state) => state.group);
   const id = getGroupIdFromUrl();
 
   const [group, setGroup] = useState<Group>();
   const [total, setTotal] = useState<number>(0);
   const [show, setShow] = useState<boolean>(false);
 
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
-    setGroup(groups.find((g: any) => g.id === id));
-  }, [groups, id]);
+    async function getGroupById(groupId: string) {
+      const response = new Promise((resolve, reject) => {
+        dispatch({
+          type: 'GET_GROUP_BY_ID',
+          id: groupId,
+          resolve,
+          reject,
+        });
+      });
+      const groupResp: any = await response;
+      setGroup(groupResp);
+    }
+
+    getGroupById(id);
+  }, []);
 
   useEffect(() => {
     setTotal(getTotal(id, expenses));

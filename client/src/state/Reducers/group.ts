@@ -13,7 +13,7 @@ const initialState: InitialState = {
 
 const addExpenseToMembers = (expense: Expense) => {
   const currGroup = getItems('groups').find(
-    (g: Group) => g.id === expense.groupId
+    (g: Group) => g._id === expense.groupId
   );
   const updatedCurrGroup = {
     ...currGroup,
@@ -40,7 +40,7 @@ const GroupReducer = (state = initialState, action: any) => {
         groups: getItems('groups'),
         expenses: getItems('expenses'),
       };
-    case 'ADD_GROUP':
+    case 'ADD_GROUP_SUCCESS':
       const newGroups = addToLS(
         {
           id: payload.id,
