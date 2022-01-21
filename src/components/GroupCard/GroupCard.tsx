@@ -15,6 +15,7 @@ function GroupCard(props: GroupCardProps) {
   const { expenses } = useAppSelector((state) => state.group);
   const navigate = useNavigate();
   const { data, handleEditClick } = props;
+  
   const onLinkClick = () => {
     navigate(`/group/${data._id}`);
   };

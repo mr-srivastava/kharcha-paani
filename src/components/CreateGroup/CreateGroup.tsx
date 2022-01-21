@@ -6,9 +6,6 @@ import {
   Alert,
   Button,
   CloseButton,
-  Dropdown,
-  DropdownButton,
-  Form,
   FormControl,
   InputGroup,
   ListGroup,
@@ -27,10 +24,9 @@ import {
   IoInformationCircleOutline,
 } from 'react-icons/io5';
 import { useAppDispatch } from '../../state/stateHooks';
-import { currencies } from '../../utils';
 
 import './CreateGroup.scss';
-import { Currency, Group, Member } from 'src/indexTypes';
+import { Group, Member } from 'src/indexTypes';
 
 type CreateGroupProps = {
   edit?: boolean;
@@ -45,7 +41,6 @@ function CreateGroup({ open, setOpen, data, edit }: CreateGroupProps) {
 
   const [page, setPage] = useState<number>(0);
   const [groupName, setGroupName] = useState<string>('');
-  // const [currency, setCurrency] = useState<string>('');
   const [memberText, setMemberText] = useState<string>('');
   const [members, setMembers] = useState<Member[]>([]);
 
@@ -59,7 +54,25 @@ function CreateGroup({ open, setOpen, data, edit }: CreateGroupProps) {
   const handleClose = () => setOpen(false);
 
   const onDoneClick = async () => {
-    if (!edit) {
+    if (edit && data) {
+      const payload = {
+        id: data._id,
+        payloadData: {
+          name: groupName,
+          members,
+        },
+      };
+      const response: any = new Promise((resolve, reject) => {
+        dispatch({
+          type: 'UPDATE_GROUP',
+          payload,
+          resolve,
+          reject,
+        });
+      });
+      const temp = await response;
+      console.log(temp);
+    } else {
       const groupData = {
         name: groupName,
         members,
@@ -75,16 +88,6 @@ function CreateGroup({ open, setOpen, data, edit }: CreateGroupProps) {
       const { id } = await response;
       handleClose();
       navigate(`/group/${id}`);
-    } else {
-      const groupData = {
-        id: data ? data._id : uuidv4(),
-        groupName,
-        members,
-      };
-      dispatch({
-        type: 'UPDATE_GROUP',
-        payload: groupData,
-      });
     }
     handleClose();
   };
@@ -123,18 +126,6 @@ function CreateGroup({ open, setOpen, data, edit }: CreateGroupProps) {
     setMembers(updatedList);
   };
 
-  // const getCurrBtnName = (cc: string) => {
-  //   if (cc === '') return 'Select currency';
-  //   const activeCurr = currencies.find((c: Currency) => c.cc === cc);
-  //   return activeCurr
-  //     ? `${activeCurr.name} (${activeCurr.symbol})`
-  //     : 'Invalid Currency';
-  // };
-
-  // const onCurrSelect = (e: string) => {
-  //   setCurrency(e);
-  // };
-
   const GroupNameJsx = () => {
     return (
       <>
@@ -155,18 +146,6 @@ function CreateGroup({ open, setOpen, data, edit }: CreateGroupProps) {
             }}
           />
         </InputGroup>
-        {/* <DropdownButton
-          className="currency-dropdown"
-          title={getCurrBtnName(currency)}
-          onSelect={onCurrSelect}
-        >
-          {currencies.map((curr) => (
-            <Dropdown.Item
-              key={curr.cc}
-              eventKey={curr.cc}
-            >{`${curr.name} (${curr.symbol})`}</Dropdown.Item>
-          ))}
-        </DropdownButton> */}
       </>
     );
   };

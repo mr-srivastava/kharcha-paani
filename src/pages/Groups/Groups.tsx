@@ -88,7 +88,7 @@ function Groups() {
             edit
             open={openEditModal}
             setOpen={setOpenEditModal}
-            data={groups.find((g: any) => g.id === editId)}
+            data={groups.find((g: Group) => g._id === editId)}
           />
         </div>
       )}
