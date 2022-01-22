@@ -5,7 +5,7 @@ interface Currency {
 }
 
 type Member = {
-  id: string;
+  _id: string;
   name: string;
   share: number;
   paid: number;

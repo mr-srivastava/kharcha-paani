@@ -11,11 +11,17 @@ import {
   ListGroup,
   Modal,
 } from 'react-bootstrap';
-import { IoPerson, IoInformationCircleOutline } from 'react-icons/io5';
+import {
+  IoPerson,
+  IoInformationCircleOutline,
+  IoCloseOutline,
+  IoClose,
+} from 'react-icons/io5';
 import { useAppDispatch } from '../../state/stateHooks';
 
 import './GroupModal.scss';
 import { Group, Member } from 'src/indexTypes';
+import { remove } from 'lodash';
 
 type GroupModalProps = {
   edit?: boolean;
@@ -30,7 +36,7 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
 
   const [groupName, setGroupName] = useState<string>('');
   const [memberText, setMemberText] = useState<string>('');
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<any[]>([]);
 
   useEffect(() => {
     if (data) {
@@ -58,8 +64,9 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
           reject,
         });
       });
-      const temp = await response;
-      console.log(temp);
+      await response;
+      handleClose();
+      navigate('/groups/');
     } else {
       const groupData = {
         name: groupName,
@@ -92,7 +99,6 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
 
   const handleMemberAdd = () => {
     const newMember = {
-      id: uuidv4(),
       name: memberText,
       share: 0,
       paid: 0,
@@ -101,9 +107,11 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
     setMemberText('');
   };
 
-  const handleMemberRemove = (id: string) => {
-    const updatedList = members.filter((mem) => mem.id !== id);
-    setMembers(updatedList);
+  const handleMemberRemove = (idx: number) => {
+    const updatedMembers = remove(members, (mem) => {
+      return members.indexOf(mem) !== idx;
+    });
+    setMembers(updatedMembers);
   };
 
   return (
@@ -181,14 +189,24 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
               </div>
             </Alert>
             <ListGroup className="member-group-wrap">
-              {members.map((mem) => (
-                <ListGroup.Item key={mem.id} className="member-list-wrap">
+              {members.map((mem, idx) => (
+                <ListGroup.Item
+                  key={`${mem.name}_${idx}`}
+                  className="member-list-wrap"
+                >
                   <div className="member-list-item">
                     <div className="member-wrap">
                       <IoPerson />
                       <span>{mem.name}</span>
                     </div>
-                    <CloseButton onClick={() => handleMemberRemove(mem.id)} />
+                    <div
+                      className="close-btn"
+                      onClick={() => handleMemberRemove(idx)}
+                    >
+                      <IoCloseOutline className="x-icon" />
+                      <IoClose className="x-icon-hover" />
+                    </div>
+                    {/* <CloseButton onClick={() => handleMemberRemove(mem.id)} /> */}
                   </div>
                 </ListGroup.Item>
               ))}

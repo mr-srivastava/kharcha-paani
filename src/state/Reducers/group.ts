@@ -18,10 +18,10 @@ const addExpenseToMembers = (expense: Expense) => {
   const updatedCurrGroup = {
     ...currGroup,
     members: currGroup.members.map((mem: Member) => {
-      const paid = expense.paidBy.find((m: any) => m.id === mem.id)
+      const paid = expense.paidBy.find((m: any) => m.id === mem._id)
         ? mem.paid + Math.round(expense.amount / expense.paidBy.length)
         : mem.paid;
-      const share = expense.sharedBy.find((m: any) => m.id === mem.id)
+      const share = expense.sharedBy.find((m: any) => m.id === mem._id)
         ? Math.round(expense.amount / expense.sharedBy.length) + mem.share
         : mem.share;
       return { ...mem, share, paid };

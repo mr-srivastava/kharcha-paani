@@ -53,7 +53,8 @@ function* createGroup(action: any): Generator<any> {
 }
 
 const updateGroupCall = (payload: any) => {
-  const { id, payload: payloadData } = payload;
+  const { id, payloadData } = payload;
+
   return axios.put(`${API_BASE}/api/group/${id}`, payloadData);
 };
 

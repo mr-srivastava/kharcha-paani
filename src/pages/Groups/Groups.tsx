@@ -18,7 +18,7 @@ function Groups() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    async function getGroups() {
+    const getGroups = async () => {
       const response = new Promise((resolve, reject) => {
         setLoading(true);
         dispatch({
@@ -30,7 +30,7 @@ function Groups() {
       const { groups }: any = await response;
       setGroups(groups);
       setLoading(false);
-    }
+    };
 
     getGroups();
   }, []);
@@ -57,7 +57,11 @@ function Groups() {
             {groups && groups.length ? (
               <div className="card-grid">
                 {groups.map((group: Group) => (
-                  <GroupCard data={group} handleEditClick={handleEditClick} />
+                  <GroupCard
+                    key={group._id}
+                    data={group}
+                    handleEditClick={handleEditClick}
+                  />
                 ))}
               </div>
             ) : (
