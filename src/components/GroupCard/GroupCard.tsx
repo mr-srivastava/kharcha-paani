@@ -1,8 +1,8 @@
 import { Card, Dropdown, DropdownButton } from 'react-bootstrap';
-import { IoOpenOutline, IoOptionsOutline } from 'react-icons/io5';
+import { IoOpenOutline, IoOptionsOutline, IoTrash } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import { Group } from 'src/indexTypes';
-import { useAppSelector } from 'src/state/stateHooks';
+import { useAppDispatch, useAppSelector } from 'src/state/stateHooks';
 import { formatCurrency, getTotal } from 'src/utils';
 import './GroupCard.scss';
 
@@ -14,11 +14,20 @@ interface GroupCardProps {
 function GroupCard(props: GroupCardProps) {
   const { expenses } = useAppSelector((state) => state.group);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { data, handleEditClick } = props;
-  
+
   const onLinkClick = () => {
     navigate(`/group/${data._id}`);
   };
+
+  const onDeleteClick = () => {
+    dispatch({
+      type: 'DELETE_GROUP',
+      id: data._id,
+    });
+  };
+
   return (
     <div className="card-wrapper">
       <Card className="card-element">
@@ -47,6 +56,14 @@ function GroupCard(props: GroupCardProps) {
                   stroke="#41b4a5"
                 />
                 <p>Go to group</p>
+              </Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item
+                className="delete-div d-flex align-items-center"
+                onClick={onDeleteClick}
+              >
+                <IoTrash stroke="red" fill="red" />
+                <p>Delete</p>
               </Dropdown.Item>
             </DropdownButton>
           </Card.Title>

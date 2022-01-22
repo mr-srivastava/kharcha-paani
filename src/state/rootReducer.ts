@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux';
-import { GroupReducer } from './Reducers/group';
+import { groups, groupPage } from './Reducers/group';
 
 export const rootReducer = combineReducers({
-  group: GroupReducer,
+  group: groupPage,
+  groups,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

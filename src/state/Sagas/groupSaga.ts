@@ -8,15 +8,13 @@ const getAllGroups = () => {
   return axios.get(`${API_BASE}/api/group/`);
 };
 
-function* getGroups(action: any): Generator<any> {
+function* getGroups(): Generator<any> {
   try {
+    yield put({ type: 'SET_ALL_GROUPS_LOADING' });
     const response: any = yield call(getAllGroups);
-    if (response.status === 200) {
-      action.resolve(response.data);
-    }
-    // yield put({ type: 'GET_ALL_GROUPS_SUCCESS', user: user });
+    yield put({ type: 'GET_ALL_GROUPS_SUCCESS', groups: response.data.groups });
   } catch (e) {
-    // yield put({ type: 'GET_ALL_GROUPS_FAILURE', message: e.message });
+    yield put({ type: 'GET_ALL_GROUPS_FAILURE' });
   }
 }
 
@@ -62,26 +60,34 @@ function* updateGroup(action: any): Generator<any> {
   try {
     const response: any = yield call(updateGroupCall, action.payload);
     if (response.status === 200) {
-      action.resolve(response.data);
+      yield put({ type: 'GET_ALL_GROUPS' });
     }
-    // yield put({ type: 'GET_ALL_GROUPS_SUCCESS', user: user });
   } catch (e) {
     // yield put({ type: 'GET_ALL_GROUPS_FAILURE', message: e.message });
   }
 }
 
-/*
-  Alternatively you may use takeLatest.
+const deleteGroupById = (id: string) => {
+  return axios.delete(`${API_BASE}/api/group/${id}`);
+};
 
-  Does not allow concurrent fetches of user. If "USER_FETCH_REQUESTED" gets
-  dispatched while a fetch is already pending, that pending fetch is cancelled
-  and only the latest one will be run.
-*/
+function* deleteGroup(action: any): Generator<any> {
+  try {
+    const response: any = yield call(deleteGroupById, action.id);
+    if (response.status === 200) {
+      yield put({ type: 'GET_ALL_GROUPS' });
+    }
+  } catch (e) {
+    // yield put({ type: 'GET_ALL_GROUPS_FAILURE', message: e.message });
+  }
+}
+
 function* groupSaga() {
   yield takeLatest('GET_ALL_GROUPS', getGroups);
-  yield takeLatest('GET_GROUP_BY_ID', getGroup);
-  yield takeLatest('ADD_GROUP', createGroup);
-  yield takeLatest('UPDATE_GROUP', updateGroup);
+  yield takeEvery('GET_GROUP_BY_ID', getGroup);
+  yield takeEvery('ADD_GROUP', createGroup);
+  yield takeEvery('UPDATE_GROUP', updateGroup);
+  yield takeEvery('DELETE_GROUP', deleteGroup);
 }
 
 export default groupSaga;

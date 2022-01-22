@@ -3,36 +3,24 @@ import { Button, Image } from 'react-bootstrap';
 import { GroupModal, NavBar, PageLoader } from 'src/components';
 import { GroupCard } from 'src/components';
 import { Group } from 'src/indexTypes';
-import { useAppDispatch } from 'src/state/stateHooks';
+import { useAppDispatch, useAppSelector } from 'src/state/stateHooks';
 import NullImg from 'src/assets/images/groups_null.svg';
 import './Groups.scss';
 
 function Groups() {
-  // const { groups } = useAppSelector((state) => state.group);
-  const [groups, setGroups] = useState<any>();
+  const { groups, loading, error }: any = useAppSelector(
+    (state) => state.groups
+  );
   const [editId, setEditId] = useState<string>('');
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const getGroups = async () => {
-      const response = new Promise((resolve, reject) => {
-        setLoading(true);
-        dispatch({
-          type: 'GET_ALL_GROUPS',
-          resolve,
-          reject,
-        });
-      });
-      const { groups }: any = await response;
-      setGroups(groups);
-      setLoading(false);
-    };
-
-    getGroups();
+    dispatch({
+      type: 'GET_ALL_GROUPS',
+    });
   }, []);
 
   const handleEditClick = (id: string) => {

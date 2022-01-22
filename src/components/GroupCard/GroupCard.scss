@@ -28,13 +28,17 @@
       }
     }
     .dropdown-menu {
-      .edit-div {
+      .edit-div,
+      .link-div,
+      .delete-div {
         cursor: pointer;
         p {
           margin-bottom: 0;
           margin-left: 5px;
           font-size: 12px;
         }
+      }
+      .edit-div {
         .edit-group-hover {
           display: none;
         }
@@ -52,12 +56,6 @@
       }
 
       .link-div {
-        cursor: pointer;
-        p {
-          margin-bottom: 0;
-          margin-left: 5px;
-          font-size: 12px;
-        }
         .link-to-group-hover {
           display: none;
         }
@@ -72,6 +70,10 @@
             display: unset;
           }
         }
+      }
+
+      .delete-div {
+        color: red;
       }
     }
     .card-content {

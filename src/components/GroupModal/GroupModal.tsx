@@ -56,17 +56,11 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
           members,
         },
       };
-      const response: any = new Promise((resolve, reject) => {
-        dispatch({
-          type: 'UPDATE_GROUP',
-          payload,
-          resolve,
-          reject,
-        });
+      dispatch({
+        type: 'UPDATE_GROUP',
+        payload,
       });
-      await response;
       handleClose();
-      navigate('/groups/');
     } else {
       const groupData = {
         name: groupName,

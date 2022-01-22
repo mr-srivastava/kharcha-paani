@@ -31,7 +31,7 @@ const addExpenseToMembers = (expense: Expense) => {
   return updateToLS(updatedCurrGroup, 'groups');
 };
 
-const GroupReducer = (state = initialState, action: any) => {
+const groupPage = (state = initialState, action: any) => {
   const { payload, type } = action;
   switch (type) {
     case 'SET_APP_STATE':
@@ -73,4 +73,24 @@ const GroupReducer = (state = initialState, action: any) => {
   }
 };
 
-export { GroupReducer };
+const intialGroupsState = {
+  loading: false,
+  error: false,
+  groups: [],
+};
+const groups = (state = intialGroupsState, action: any) => {
+  const { type } = action;
+  switch (type) {
+    case 'SET_ALL_GROUPS_LOADING':
+      return { ...state, loading: true };
+    case 'GET_ALL_GROUPS_SUCCESS':
+      return { ...state, loading: false, groups: action.groups };
+    case 'GET_ALL_GROUPS_FAILURE':
+      console.log(action);
+      return { ...state, loading: false, error: true };
+    default:
+      return { ...state };
+  }
+};
+
+export { groupPage, groups };
