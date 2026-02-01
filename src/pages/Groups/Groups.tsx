@@ -1,23 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useQuery } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 import { GroupModal, NavBar, PageLoader, GroupCard } from 'src/components';
-import { Group } from 'src/indexTypes';
-import { useGroupStore } from 'src/store/useGroupStore';
+import { Group, Id } from 'src/indexTypes';
 import NullImg from 'src/assets/images/groups_null.svg';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
 function Groups() {
-  const groups = useGroupStore((state) => state.groups);
-  const loading = useGroupStore((state) => state.loading);
-  const getAllGroups = useGroupStore((state) => state.getAllGroups);
-
-  const [editId, setEditId] = useState<string>('');
+  const groups = useQuery(api.groups.list);
+  const [editId, setEditId] = useState<Id<'groups'> | ''>('');
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 
-  useEffect(() => {
-    getAllGroups();
-  }, [getAllGroups]);
-
-  const handleEditClick = (id: string) => {
+  const loading = groups === undefined;
+  const handleEditClick = (id: Id<'groups'>) => {
     setEditId(id);
     setOpenEditModal(true);
   };
@@ -33,15 +30,15 @@ function Groups() {
               <h1 className="font-serif text-4xl md:text-5xl font-bold tracking-tight text-white">
                 Your <span className="text-teal-400">Groups</span>
               </h1>
-              <button
+              <Button
                 type="button"
                 className="px-8 py-3 bg-teal-400 text-navy-900 font-sans font-semibold rounded-full shadow-glow hover:bg-teal-300 hover:-translate-y-1 transition-all duration-300"
                 onClick={() => setOpenModal(true)}
               >
                 Create Group
-              </button>
+              </Button>
             </div>
-            <hr className="border-slate-600/50 mb-8" />
+            <Separator className="mb-8 bg-slate-600/50" />
             {groups && groups.length > 0 ? (
               <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6 items-stretch">
                 {groups.map((group: Group) => (
@@ -59,13 +56,13 @@ function Groups() {
                 <p className="mt-2 text-slate-400 font-sans text-lg max-w-sm">
                   Please create one to get started.
                 </p>
-                <button
+                <Button
                   type="button"
                   className="mt-6 px-8 py-3 bg-teal-400 text-navy-900 font-sans font-semibold rounded-full shadow-glow hover:bg-teal-300 hover:-translate-y-1 transition-all duration-300"
                   onClick={() => setOpenModal(true)}
                 >
                   Create Group
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -76,7 +73,7 @@ function Groups() {
         edit
         open={openEditModal}
         setOpen={setOpenEditModal}
-        data={groups.find((g: Group) => g._id === editId)}
+        data={groups?.find((g: Group) => g._id === editId)}
       />
     </div>
   );

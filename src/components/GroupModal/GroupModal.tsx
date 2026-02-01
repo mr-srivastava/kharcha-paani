@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 import {
   IoPerson,
   IoInformationCircleOutline,
   IoCloseOutline,
   IoClose,
 } from 'react-icons/io5';
-import { useGroupStore } from 'src/store/useGroupStore';
 import { Group } from 'src/indexTypes';
 import { remove } from 'lodash';
 import {
@@ -16,9 +17,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 type GroupModalProps = {
   edit?: boolean;
@@ -29,12 +32,12 @@ type GroupModalProps = {
 
 function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
   const navigate = useNavigate();
-  const updateGroupApi = useGroupStore((state) => state.updateGroupApi);
-  const createGroup = useGroupStore((state) => state.createGroup);
+  const createGroup = useMutation(api.groups.create);
+  const updateGroup = useMutation(api.groups.update);
 
   const [groupName, setGroupName] = useState<string>('');
   const [memberText, setMemberText] = useState<string>('');
-  const [members, setMembers] = useState<{ name: string; share: number; paid: number }[]>([]);
+  const [members, setMembers] = useState<{ id?: string; name: string; share: number; paid: number }[]>([]);
 
   useEffect(() => {
     if (data) {
@@ -46,31 +49,26 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
   const handleClose = () => setOpen(false);
 
   const onDoneClick = async () => {
-    if (edit && data) {
-      const payload = {
-        id: data._id,
-        payloadData: {
+    try {
+      if (edit && data) {
+        await updateGroup({
+          id: data._id,
           name: groupName,
           members,
-        },
-      };
-      await updateGroupApi(payload);
-      handleClose();
-    } else {
-      const groupData = {
-        name: groupName,
-        members,
-      };
-      try {
-        const response = await createGroup(groupData);
+        });
         handleClose();
-        const id = response?.id ?? response?._id;
-        if (id) {
-          navigate(`/group/${id}`);
+      } else {
+        const groupId = await createGroup({
+          name: groupName,
+          members,
+        });
+        handleClose();
+        if (groupId) {
+          navigate(`/group/${groupId}`);
         }
-      } catch {
-        handleClose();
       }
+    } catch {
+      handleClose();
     }
   };
 
@@ -150,34 +148,38 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
                 Add
               </Button>
             </div>
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-800 transition-colors">
+            <Alert className="rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-800">
               <IoInformationCircleOutline className="h-5 w-5 shrink-0" />
-              <span className="text-sm">
+              <AlertDescription className="text-sm">
                 Add at least one member in the group
-              </span>
-            </div>
-            <div className="h-[206px] overflow-auto scrollbar-thin border rounded-xl bg-muted/30">
-              {members.map((mem, idx) => (
-                <div
-                  key={`${mem.name}_${idx}`}
-                  className="flex items-center justify-between px-3 py-2.5 hover:bg-muted/60 dark:hover:bg-muted/40 border-b border-border/50 last:border-b-0 transition-colors duration-150"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <IoPerson className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">{mem.name}</span>
-                  </div>
-                  <button
-                    type="button"
-                    className="group p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-150 inline-flex items-center focus-visible:ring-2 focus-visible:ring-ring"
-                    onClick={() => handleMemberRemove(idx)}
-                    aria-label="Remove member"
+              </AlertDescription>
+            </Alert>
+            <ScrollArea className="h-[206px] border rounded-xl bg-muted/30">
+              <div className="p-1">
+                {members.map((mem, idx) => (
+                  <div
+                    key={`${mem.name}_${idx}`}
+                    className="flex items-center justify-between px-3 py-2.5 hover:bg-muted/60 dark:hover:bg-muted/40 border-b border-border/50 last:border-b-0 transition-colors duration-150"
                   >
-                    <IoCloseOutline className="h-5 w-5 block group-hover:hidden" />
-                    <IoClose className="h-5 w-5 hidden group-hover:block" />
-                  </button>
-                </div>
-              ))}
-            </div>
+                    <div className="flex items-center gap-2.5">
+                      <IoPerson className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">{mem.name}</span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="group h-9 w-9 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-150"
+                      onClick={() => handleMemberRemove(idx)}
+                      aria-label="Remove member"
+                    >
+                      <IoCloseOutline className="h-5 w-5 block group-hover:hidden" />
+                      <IoClose className="h-5 w-5 hidden group-hover:block" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
           </div>
         </div>
         <DialogFooter className="gap-2 pt-4 sm:pt-4">

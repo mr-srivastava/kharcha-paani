@@ -16,10 +16,10 @@ A modern expense splitting application that makes group expense management effor
 ## 🚀 Tech Stack
 
 - **Frontend Framework**: React 18.3
-- **Build Tool**: Vite 5.4
+- **Build Tool**: Vite 7.x
+- **Backend**: Convex (real-time database and serverless functions)
 - **Language**: TypeScript 5.5
 - **Styling**: Tailwind CSS 3.4
-- **State Management**: Zustand 4.5
 - **UI Components**: Radix UI primitives
 - **Icons**: Lucide React & React Icons
 - **Routing**: React Router DOM 6.26
@@ -42,7 +42,13 @@ cd kharcha-paani
 npm install
 ```
 
-3. Start the development server:
+3. Set up Convex (one-time):
+```bash
+npx convex dev
+```
+This creates a Convex project and adds `VITE_CONVEX_URL` to `.env.local`. Keep it running in a separate terminal, or run `npx convex dev` once to configure then use `npm run dev` alone.
+
+4. Start the development server:
 ```bash
 npm run dev
 ```
@@ -54,6 +60,7 @@ The application will open automatically at `http://localhost:3000`
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
+- `npm run convex:dev` - Run Convex backend (development)
 - `npm run lint` - Run ESLint
 - `npm run lint:fix` - Fix ESLint errors
 - `npm run type-check` - Run TypeScript type checking
@@ -62,8 +69,12 @@ The application will open automatically at `http://localhost:3000`
 
 ```
 kharcha-paani/
+├── convex/             # Convex backend (schema, queries, mutations)
+│   ├── schema.ts       # Data model
+│   ├── groups.ts       # Group operations
+│   └── expenses.ts     # Expense operations
 ├── src/
-│   ├── components/      # Reusable UI components
+│   ├── components/     # Reusable UI components
 │   │   ├── AddExpense/
 │   │   ├── ExpenseTable/
 │   │   ├── GroupCard/
@@ -74,7 +85,6 @@ kharcha-paani/
 │   │   ├── Groups/
 │   │   ├── GroupPage/
 │   │   └── LandingPage/
-│   ├── store/          # Zustand state management
 │   ├── utils/          # Utility functions
 │   ├── assets/         # Images and static assets
 │   └── styles/         # Global styles
@@ -92,7 +102,8 @@ The application uses a custom design system with:
 
 ## 🌐 Deployment
 
-The application is automatically deployed to Netlify on every push to the main branch.
+1. **Convex**: Deploy the backend with `npx convex deploy` and note the deployment URL.
+2. **Netlify**: Set the `VITE_CONVEX_URL` environment variable to your Convex deployment URL. The frontend is automatically deployed to Netlify on every push to the main branch.
 
 ## 📝 License
 

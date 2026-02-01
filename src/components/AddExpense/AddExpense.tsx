@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { useMutation } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 import { IoListOutline } from 'react-icons/io5';
-import { useGroupStore } from 'src/store/useGroupStore';
 import { Group } from 'src/indexTypes';
 import {
   Sheet,
@@ -10,10 +10,11 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-type MemberWithFlags = { _id: string; name: string; share: number; paid: number; hasPaid?: boolean; hasShare?: boolean };
+type MemberWithFlags = { id?: string; name: string; share: number; paid: number; hasPaid?: boolean; hasShare?: boolean };
 
 interface AddExpenseProps {
   show: boolean;
@@ -22,7 +23,7 @@ interface AddExpenseProps {
 }
 
 function AddExpense({ show, handleClose, group }: AddExpenseProps) {
-  const addExpense = useGroupStore((state) => state.addExpense);
+  const createExpense = useMutation(api.expenses.create);
 
   const [expenseName, setExpenseName] = useState<string>('');
   const [amount, setAmount] = useState<number | null>(null);
@@ -65,21 +66,7 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
     setAmount(val === '' ? null : parseInt(val, 10));
   };
 
-  const handlePaidBySelect = (e: React.ChangeEvent<HTMLInputElement>, mem: MemberWithFlags) => {
-    setMembers((prevState) =>
-      prevState.map((el) =>
-        el._id === mem._id ? { ...el, hasPaid: e.target.checked } : el
-      )
-    );
-  };
-
-  const handleSharedBySelect = (e: React.ChangeEvent<HTMLInputElement>, mem: MemberWithFlags) => {
-    setMembers((prevState) =>
-      prevState.map((el) =>
-        el._id === mem._id ? { ...el, hasShare: e.target.checked } : el
-      )
-    );
-  };
+  const memberKey = (mem: MemberWithFlags) => mem.id ?? mem.name;
 
   const handleAddPaidBy = () => {
     setPaidBy(members.filter((mem) => mem.hasPaid));
@@ -95,17 +82,19 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
     setMembers((prev) => prev.map((el) => ({ ...el, hasShare: true })));
   };
 
-  const handleSubmit = () => {
-    const payload = {
-      id: uuidv4(),
-      groupId: group._id,
-      name: expenseName,
-      amount: amount ?? 0,
-      paidBy: paidBy.map((mem) => ({ id: mem._id })),
-      sharedBy: sharedBy.map((mem) => ({ id: mem._id })),
-    };
-    addExpense(payload);
-    onCloseClick();
+  const handleSubmit = async () => {
+    try {
+      await createExpense({
+        groupId: group._id,
+        name: expenseName,
+        amount: amount ?? 0,
+        paidBy: paidBy.map((mem) => ({ memberId: mem.id ?? mem.name, name: mem.name })),
+        sharedBy: sharedBy.map((mem) => ({ memberId: mem.id ?? mem.name, name: mem.name })),
+      });
+      onCloseClick();
+    } catch {
+      onCloseClick();
+    }
   };
 
   const paidByDisplay =
@@ -204,18 +193,26 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
           {showSelectPaidBy && (
             <div className="space-y-5 animate-in fade-in-0 duration-200">
               <div className="space-y-1">
-                {members.map((mem) => (
+                {members.map((mem, idx) => (
                   <div
-                    key={mem._id}
+                    key={memberKey(mem) + idx}
                     className="flex items-center gap-3 py-2.5 px-2 rounded-lg hover:bg-muted/50 border-b border-border/50 last:border-b-0 transition-colors"
                   >
-                    <input
-                      type="checkbox"
-                      id={`paid-${mem._id}`}
-                      onChange={(e) => handlePaidBySelect(e, mem)}
-                      className="h-4 w-4 rounded border-input accent-green-primary transition-colors"
+                    <Checkbox
+                      id={`paid-${memberKey(mem)}-${idx}`}
+                      checked={mem.hasPaid ?? false}
+                      onCheckedChange={(checked) =>
+                        setMembers((prev) =>
+                          prev.map((el) =>
+                            memberKey(el) === memberKey(mem)
+                              ? { ...el, hasPaid: !!checked }
+                              : el
+                          )
+                        )
+                      }
+                      className="data-[state=checked]:bg-green-primary data-[state=checked]:border-green-primary"
                     />
-                    <Label htmlFor={`paid-${mem._id}`} className="flex-1 cursor-pointer font-medium">
+                    <Label htmlFor={`paid-${memberKey(mem)}-${idx}`} className="flex-1 cursor-pointer font-medium">
                       {mem.name}
                     </Label>
                   </div>
@@ -231,28 +228,36 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
 
           {showSelectSharedBy && (
             <div className="space-y-5 animate-in fade-in-0 duration-200">
-              <button
+              <Button
                 type="button"
-                className="flex items-center justify-end gap-2 w-full py-2 px-2 rounded-lg cursor-pointer hover:text-green-primary hover:bg-muted/50 transition-all duration-200 font-medium"
+                variant="ghost"
+                className="flex items-center justify-end gap-2 w-full py-2 px-2 rounded-lg hover:text-green-primary hover:bg-muted/50 transition-all duration-200 font-medium"
                 onClick={handleSelectAllSharedBy}
               >
                 <IoListOutline className="h-4 w-4 text-green-primary" />
                 <span>Select all</span>
-              </button>
+              </Button>
               <div className="space-y-1">
-                {members.map((mem) => (
+                {members.map((mem, idx) => (
                   <div
-                    key={mem._id}
+                    key={memberKey(mem) + idx}
                     className="flex items-center gap-3 py-2.5 px-2 rounded-lg hover:bg-muted/50 border-b border-border/50 last:border-b-0 transition-colors"
                   >
-                    <input
-                      type="checkbox"
-                      id={`share-${mem._id}`}
+                    <Checkbox
+                      id={`share-${memberKey(mem)}-${idx}`}
                       checked={mem.hasShare ?? false}
-                      onChange={(e) => handleSharedBySelect(e, mem)}
-                      className="h-4 w-4 rounded border-input accent-green-primary transition-colors"
+                      onCheckedChange={(checked) =>
+                        setMembers((prev) =>
+                          prev.map((el) =>
+                            memberKey(el) === memberKey(mem)
+                              ? { ...el, hasShare: !!checked }
+                              : el
+                          )
+                        )
+                      }
+                      className="data-[state=checked]:bg-green-primary data-[state=checked]:border-green-primary"
                     />
-                    <Label htmlFor={`share-${mem._id}`} className="flex-1 cursor-pointer font-medium">
+                    <Label htmlFor={`share-${memberKey(mem)}-${idx}`} className="flex-1 cursor-pointer font-medium">
                       {mem.name}
                     </Label>
                   </div>

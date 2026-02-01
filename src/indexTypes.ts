@@ -1,3 +1,5 @@
+import type { Doc, Id } from '../convex/_generated/dataModel';
+
 interface Currency {
   name: string;
   cc: string;
@@ -5,25 +7,15 @@ interface Currency {
 }
 
 type Member = {
-  _id: string;
+  id?: string;
   name: string;
   share: number;
   paid: number;
 };
 
-interface Group {
-  _id: string;
-  name: string;
-  members: Member[];
-}
+type Group = Doc<'groups'>;
 
-interface Expense {
-  id: string;
-  groupId: string;
-  name: string;
-  amount: number;
-  paidBy: any[];
-  sharedBy: any[];
-}
+type Expense = Doc<'expenses'>;
 
 export type { Currency, Group, Expense, Member };
+export type { Id };

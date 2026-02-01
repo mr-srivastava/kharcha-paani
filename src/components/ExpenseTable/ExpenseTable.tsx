@@ -27,7 +27,7 @@ function ExpenseTable({ group }: ExpenseTableProps) {
           {group.members?.length > 0 &&
             group.members.map((mem, idx) => (
               <TableRow
-                key={mem._id}
+                key={mem.id ?? mem.name ?? idx}
                 className={`transition-colors duration-150 hover:bg-muted/60 ${idx % 2 === 1 ? 'bg-muted/20' : ''}`}
               >
                 <TableCell className="px-4 py-3 font-medium">{mem.name}</TableCell>
