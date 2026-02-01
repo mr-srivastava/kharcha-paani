@@ -1,30 +1,39 @@
-import React from 'react';
-import { Table } from 'react-bootstrap';
 import { formatCurrency } from 'src/utils';
+import { Group } from 'src/indexTypes';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
-import './ExpenseTable.scss';
+interface ExpenseTableProps {
+  group: Group;
+}
 
-function ExpenseTable({ group }: any) {
+function ExpenseTable({ group }: ExpenseTableProps) {
   return (
-    <div className="expense-table-wrapper">
-      <Table hover size="sm">
-        <thead>
-          <tr>
-            <th>Member</th>
-            <th>Share</th>
-          </tr>
-        </thead>
-        <tbody>
-          {group.members.length &&
-            group.members.map((mem: any) => {
-              return (
-                <tr key={mem.id}>
-                  <td>{mem.name}</td>
-                  <td>{formatCurrency().format(mem.paid - mem.share)}</td>
-                </tr>
-              );
-            })}
-        </tbody>
+    <div className="w-full">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Member</TableHead>
+            <TableHead>Share</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {group.members?.length > 0 &&
+            group.members.map((mem) => (
+              <TableRow key={mem._id} className="hover:bg-muted/50">
+                <TableCell>{mem.name}</TableCell>
+                <TableCell>
+                  {formatCurrency().format(mem.paid - mem.share)}
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
       </Table>
     </div>
   );

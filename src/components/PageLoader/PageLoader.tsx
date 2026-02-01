@@ -1,10 +1,14 @@
-import { Spinner } from 'react-bootstrap';
+import { Loader2 } from 'lucide-react';
 
-export function PageLoader({ page }: any) {
+interface PageLoaderProps {
+  page: string;
+}
+
+export function PageLoader({ page }: PageLoaderProps) {
   return (
-    <div className="page-loader d-flex flex-column align-items-center justify-content-center vh-100">
-      <Spinner className="mb-2" animation="border" role="status" />
-      <div>{`Loading ${page}...`}</div>
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <Loader2 className="h-8 w-8 animate-spin mb-2 text-primary" aria-hidden />
+      <div className="text-muted-foreground">{`Loading ${page}...`}</div>
     </div>
   );
 }

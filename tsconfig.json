@@ -1,27 +1,29 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "typeRoots": ["./src/@types", "./node_modules/@types"],
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    // "paths": {
-    //   "@Component": ["src/components/"],
-    //   "@Assets": ["src/assets/"],
-    //   "@Pages": ["src/pages/"]
-    // },
+    "paths": {
+      "src/*": ["./src/*"],
+      "@/*": ["./src/*"]
+    },
+    "typeRoots": ["./src/@types", "./node_modules/@types"]
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/**/*.test.tsx", "src/**/*.test.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -1,27 +1,22 @@
 import { useEffect, useState } from 'react';
-import { Button, Image } from 'react-bootstrap';
-import { GroupModal, NavBar, PageLoader } from 'src/components';
-import { GroupCard } from 'src/components';
+import { Button } from '@/components/ui/button';
+import { GroupModal, NavBar, PageLoader, GroupCard } from 'src/components';
 import { Group } from 'src/indexTypes';
-import { useAppDispatch, useAppSelector } from 'src/state/stateHooks';
+import { useGroupStore } from 'src/store/useGroupStore';
 import NullImg from 'src/assets/images/groups_null.svg';
-import './Groups.scss';
 
 function Groups() {
-  const { groups, loading, error }: any = useAppSelector(
-    (state) => state.groups
-  );
+  const groups = useGroupStore((state) => state.groups);
+  const loading = useGroupStore((state) => state.loading);
+  const getAllGroups = useGroupStore((state) => state.getAllGroups);
+
   const [editId, setEditId] = useState<string>('');
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 
-  const dispatch = useAppDispatch();
-
   useEffect(() => {
-    dispatch({
-      type: 'GET_ALL_GROUPS',
-    });
-  }, []);
+    getAllGroups();
+  }, [getAllGroups]);
 
   const handleEditClick = (id: string) => {
     setEditId(id);
@@ -29,21 +24,24 @@ function Groups() {
   };
 
   return (
-    <div className="groups-wrapper">
+    <div>
       <NavBar showIcon />
-      <div className="groups-container">
+      <div className="font-quando p-5">
         {loading && <PageLoader page="Groups" />}
         {!loading && (
           <>
-            <div className="heading d-flex justify-content-between align-items-center">
-              <h1 className="heading-text">GROUPS</h1>
-              <Button className="create-btn" onClick={() => setOpenModal(true)}>
+            <div className="flex justify-between items-center mb-2">
+              <h1 className="font-bold">GROUPS</h1>
+              <Button
+                className="bg-green-primary hover:opacity-90 hover:bg-green-primary"
+                onClick={() => setOpenModal(true)}
+              >
                 Create
               </Button>
             </div>
-            <hr />
-            {groups && groups.length ? (
-              <div className="card-grid">
+            <hr className="my-4" />
+            {groups && groups.length > 0 ? (
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5 items-stretch">
                 {groups.map((group: Group) => (
                   <GroupCard
                     key={group._id}
@@ -53,14 +51,16 @@ function Groups() {
                 ))}
               </div>
             ) : (
-              <div className="null-state mt-5 d-flex flex-column justify-content-center align-items-center">
-                <Image src={NullImg} className="w-25" />
-                <div className="null-text mt-2 d-flex flex-column justify-content-center align-items-center">
-                  <h2 className="l1">No groups created.</h2>
-                  <div className="l2">Please create one to get started.</div>
+              <div className="mt-8 flex flex-col justify-center items-center">
+                <img src={NullImg} alt="" className="w-1/4" />
+                <div className="null-text mt-2 flex flex-col justify-center items-center text-center">
+                  <h2 className="text-xl font-semibold">No groups created.</h2>
+                  <div className="text-muted-foreground">
+                    Please create one to get started.
+                  </div>
                 </div>
                 <Button
-                  className="create-btn"
+                  className="mt-4 bg-green-primary hover:opacity-90 hover:bg-green-primary"
                   onClick={() => setOpenModal(true)}
                 >
                   Create
@@ -70,21 +70,13 @@ function Groups() {
           </>
         )}
       </div>
-      {openModal && (
-        <div className="create-group">
-          <GroupModal open={openModal} setOpen={setOpenModal} />
-        </div>
-      )}
-      {openEditModal && (
-        <div className="create-group">
-          <GroupModal
-            edit
-            open={openEditModal}
-            setOpen={setOpenEditModal}
-            data={groups.find((g: Group) => g._id === editId)}
-          />
-        </div>
-      )}
+      <GroupModal open={openModal} setOpen={setOpenModal} />
+      <GroupModal
+        edit
+        open={openEditModal}
+        setOpen={setOpenEditModal}
+        data={groups.find((g: Group) => g._id === editId)}
+      />
     </div>
   );
 }
