@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { GroupModal, NavBar, PageLoader, GroupCard } from 'src/components';
 import { Group } from 'src/indexTypes';
 import { useGroupStore } from 'src/store/useGroupStore';
