@@ -1,1 +1,0 @@
-export { ExpenseTable } from "./ExpenseTable";
