@@ -34,58 +34,59 @@ function GroupCard(props: GroupCardProps) {
   };
 
   return (
-    <Card className="max-w-[300px] min-h-[200px] shadow-lg rounded-2xl overflow-hidden">
-      <CardContent className="bg-blue-dark rounded-2xl text-white p-6">
-        <CardTitle className="flex justify-between items-center mb-0">
-          <div>{data.name}</div>
+    <Card className="max-w-[300px] min-h-[200px] shadow-xl rounded-2xl overflow-hidden transition-all duration-200 ease-smooth hover:shadow-2xl hover:-translate-y-1 hover:shadow-card-hover">
+      <CardContent className="relative bg-blue-dark rounded-2xl text-white p-6 overflow-hidden">
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
+        <CardTitle className="relative flex justify-between items-center mb-0">
+          <div className="font-semibold text-lg truncate pr-2">{data.name}</div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="p-0 h-auto w-auto bg-transparent hover:bg-transparent hover:text-green-primary text-white"
+                className="relative p-0 h-auto w-auto bg-transparent hover:bg-white/10 hover:text-green-primary text-white rounded-lg transition-colors duration-200"
               >
                 <Ellipsis className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="rounded-xl shadow-lg border border-border/50 min-w-[180px]">
               <DropdownMenuItem
-                className="flex items-center gap-2 cursor-pointer hover:text-green-primary"
+                className="flex items-center gap-2 cursor-pointer hover:text-green-primary focus:bg-muted transition-colors rounded-lg"
                 onSelect={() => handleEditClick(data._id)}
               >
-                <IoOptionsOutline className="h-4 w-4" stroke="#41b4a5" />
+                <IoOptionsOutline className="h-4 w-4 text-green-primary" />
                 <span>Edit group</span>
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="flex items-center gap-2 cursor-pointer hover:text-green-primary"
+                className="flex items-center gap-2 cursor-pointer hover:text-green-primary focus:bg-muted transition-colors rounded-lg"
                 onSelect={onLinkClick}
               >
-                <IoOpenOutline className="h-4 w-4" stroke="#41b4a5" />
+                <IoOpenOutline className="h-4 w-4 text-green-primary" />
                 <span>Go to group</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="flex items-center gap-2 cursor-pointer text-red-500 focus:text-red-500"
+                className="flex items-center gap-2 cursor-pointer text-red-500 focus:text-red-500 focus:bg-red-50 dark:focus:bg-red-950/30 transition-colors rounded-lg"
                 onSelect={onDeleteClick}
               >
-                <IoTrash className="h-4 w-4" stroke="red" fill="red" />
+                <IoTrash className="h-4 w-4" />
                 <span>Delete</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </CardTitle>
-        <hr className="border-white/20 my-3" />
+        <hr className="relative border-white/20 my-4" />
 
-        <div className="flex flex-col items-center gap-4">
-          <div className="text-center">
-            <div className="text-4xl">
+        <div className="relative flex flex-col items-center gap-5">
+          <div className="text-center px-2">
+            <div className="text-4xl font-semibold tracking-tight">
               {formatCurrency().format(getTotal(data._id, expenses))}
             </div>
-            <div className="text-xs text-[#b5bad0]">Total expenses</div>
+            <div className="text-xs text-white/70 mt-1">Total expenses</div>
           </div>
-          <div className="text-center">
-            <div className="text-4xl">{data.members.length}</div>
-            <div className="text-xs text-[#b5bad0]">Members</div>
+          <div className="text-center px-2">
+            <div className="text-4xl font-semibold">{data.members.length}</div>
+            <div className="text-xs text-white/70 mt-1">Members</div>
           </div>
         </div>
       </CardContent>

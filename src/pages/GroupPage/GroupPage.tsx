@@ -35,32 +35,37 @@ function GroupPage() {
   const handleShow = () => setShow(true);
 
   return (
-    <div>
+    <div className="min-h-screen bg-background">
       <NavBar showIcon />
       {loading && <PageLoader page="Group" />}
       {group && !loading && (
-        <>
-          <div className="p-2.5">
-            <div className="flex justify-between items-center mb-2.5">
-              <h1 className="text-xl font-semibold">Group : {group.name}</h1>
+        <div className="animate-fade-in">
+          <div className="px-6 py-8 max-w-7xl mx-auto">
+            <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                Group: {group.name}
+              </h1>
               <Button
-                className="bg-green-primary hover:opacity-90 hover:bg-green-primary"
+                className="bg-green-primary hover:bg-green-primary/90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                 onClick={handleShow}
               >
                 Add Expense
               </Button>
             </div>
-            <hr className="my-4" />
-            <h2 className="text-lg font-semibold">
-              TOTAL: {formatCurrency().format(total)}
-            </h2>
-            <div className="mt-4">
+            <hr className="border-border mb-6" />
+            <div className="rounded-xl bg-muted/30 border border-border px-5 py-4 mb-6 inline-block">
+              <span className="text-sm font-medium text-muted-foreground">TOTAL</span>
+              <p className="text-2xl font-bold text-foreground mt-0.5">
+                {formatCurrency().format(total)}
+              </p>
+            </div>
+            <div className="mt-6">
               <ExpenseTable group={group} />
             </div>
           </div>
 
           <AddExpense show={show} handleClose={handleClose} group={group} />
-        </>
+        </div>
       )}
     </div>
   );

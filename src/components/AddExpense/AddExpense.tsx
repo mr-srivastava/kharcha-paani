@@ -119,29 +119,30 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
 
   return (
     <Sheet open={show} onOpenChange={(open) => !open && onCloseClick()}>
-      <SheetContent side="right" className="flex flex-col">
-        <SheetHeader>
-          <SheetTitle>
+      <SheetContent side="right" className="flex flex-col w-full sm:max-w-md">
+        <SheetHeader className="space-y-1.5 pb-4">
+          <SheetTitle className="text-xl">
             {showSelectPaidBy || showSelectSharedBy
               ? 'Select Member(s)'
               : 'Add Expense'}
           </SheetTitle>
         </SheetHeader>
-        <div className="flex-1 overflow-auto py-4">
+        <div className="flex-1 overflow-auto py-2 scrollbar-thin transition-opacity duration-200">
           {!showSelectPaidBy && !showSelectSharedBy && (
-            <div className="space-y-4">
+            <div className="space-y-5 animate-in fade-in-0 duration-200">
               <div className="space-y-2">
-                <Label htmlFor="expense-name">Name of expense</Label>
+                <Label htmlFor="expense-name" className="text-sm font-medium">Name of expense</Label>
                 <Input
                   id="expense-name"
                   value={expenseName}
                   placeholder="Enter a name for the expense."
                   onChange={handleNameChange}
                   aria-label="Expense name"
+                  className="transition-colors focus-visible:ring-2 focus-visible:ring-green-primary/50"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="expense-amount">Amount</Label>
+                <Label htmlFor="expense-amount" className="text-sm font-medium">Amount</Label>
                 <Input
                   id="expense-amount"
                   value={amount ?? ''}
@@ -149,41 +150,50 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
                   onChange={handleAmountChange}
                   type="number"
                   aria-label="Amount"
+                  className="transition-colors focus-visible:ring-2 focus-visible:ring-green-primary/50"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Paid by</Label>
-                <div className="flex gap-2">
+                <Label className="text-sm font-medium">Paid by</Label>
+                <div className="flex gap-3">
                   <Input
                     value={paidByDisplay}
                     placeholder="Select members"
                     readOnly
-                    className="flex-1 bg-muted"
+                    className="flex-1 bg-muted/80 border-border transition-colors"
                   />
-                  <Button onClick={() => setShowSelectPaidBy(true)}>
+                  <Button
+                    onClick={() => setShowSelectPaidBy(true)}
+                    variant="outline"
+                    className="shrink-0 transition-all duration-200"
+                  >
                     Select
                   </Button>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Shared by</Label>
-                <div className="flex gap-2">
+                <Label className="text-sm font-medium">Shared by</Label>
+                <div className="flex gap-3">
                   <Input
                     value={sharedByDisplay}
                     placeholder="Select members"
                     readOnly
-                    className="flex-1 bg-muted"
+                    className="flex-1 bg-muted/80 border-border transition-colors"
                   />
-                  <Button onClick={() => setShowSelectSharedBy(true)}>
+                  <Button
+                    onClick={() => setShowSelectSharedBy(true)}
+                    variant="outline"
+                    className="shrink-0 transition-all duration-200"
+                  >
                     Select
                   </Button>
                 </div>
               </div>
-              <div className="flex justify-end pt-2">
+              <div className="flex justify-end pt-4">
                 <Button
                   onClick={handleSubmit}
                   disabled={disableAdd}
-                  className="bg-green-primary hover:bg-green-primary/90"
+                  className="bg-green-primary hover:bg-green-primary/90 transition-all duration-200 disabled:opacity-50"
                 >
                   Add
                 </Button>
@@ -192,62 +202,66 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
           )}
 
           {showSelectPaidBy && (
-            <div className="space-y-4">
-              <div className="space-y-2">
+            <div className="space-y-5 animate-in fade-in-0 duration-200">
+              <div className="space-y-1">
                 {members.map((mem) => (
                   <div
                     key={mem._id}
-                    className="flex items-center gap-2 py-2 border-b last:border-b-0"
+                    className="flex items-center gap-3 py-2.5 px-2 rounded-lg hover:bg-muted/50 border-b border-border/50 last:border-b-0 transition-colors"
                   >
                     <input
                       type="checkbox"
                       id={`paid-${mem._id}`}
                       onChange={(e) => handlePaidBySelect(e, mem)}
-                      className="h-4 w-4 rounded border-input"
+                      className="h-4 w-4 rounded border-input accent-green-primary transition-colors"
                     />
-                    <Label htmlFor={`paid-${mem._id}`} className="ml-2 cursor-pointer">
+                    <Label htmlFor={`paid-${mem._id}`} className="flex-1 cursor-pointer font-medium">
                       {mem.name}
                     </Label>
                   </div>
                 ))}
               </div>
-              <div className="flex justify-end">
-                <Button onClick={handleAddPaidBy}>Done</Button>
+              <div className="flex justify-end pt-2">
+                <Button onClick={handleAddPaidBy} className="bg-green-primary hover:bg-green-primary/90 transition-all duration-200">
+                  Done
+                </Button>
               </div>
             </div>
           )}
 
           {showSelectSharedBy && (
-            <div className="space-y-4">
+            <div className="space-y-5 animate-in fade-in-0 duration-200">
               <button
                 type="button"
-                className="flex items-center justify-end gap-2 w-full mb-3 cursor-pointer hover:text-green-primary transition-colors"
+                className="flex items-center justify-end gap-2 w-full py-2 px-2 rounded-lg cursor-pointer hover:text-green-primary hover:bg-muted/50 transition-all duration-200 font-medium"
                 onClick={handleSelectAllSharedBy}
               >
-                <IoListOutline className="h-4 w-4" stroke="#41b4a5" />
+                <IoListOutline className="h-4 w-4 text-green-primary" />
                 <span>Select all</span>
               </button>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {members.map((mem) => (
                   <div
                     key={mem._id}
-                    className="flex items-center gap-2 py-2 border-b last:border-b-0"
+                    className="flex items-center gap-3 py-2.5 px-2 rounded-lg hover:bg-muted/50 border-b border-border/50 last:border-b-0 transition-colors"
                   >
                     <input
                       type="checkbox"
                       id={`share-${mem._id}`}
                       checked={mem.hasShare ?? false}
                       onChange={(e) => handleSharedBySelect(e, mem)}
-                      className="h-4 w-4 rounded border-input"
+                      className="h-4 w-4 rounded border-input accent-green-primary transition-colors"
                     />
-                    <Label htmlFor={`share-${mem._id}`} className="ml-2 cursor-pointer">
+                    <Label htmlFor={`share-${mem._id}`} className="flex-1 cursor-pointer font-medium">
                       {mem.name}
                     </Label>
                   </div>
                 ))}
               </div>
-              <div className="flex justify-end">
-                <Button onClick={handleAddSharedBy}>Done</Button>
+              <div className="flex justify-end pt-2">
+                <Button onClick={handleAddSharedBy} className="bg-green-primary hover:bg-green-primary/90 transition-all duration-200">
+                  Done
+                </Button>
               </div>
             </div>
           )}

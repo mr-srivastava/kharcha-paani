@@ -24,24 +24,27 @@ function Groups() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-navy-800">
       <NavBar showIcon />
-      <div className="font-quando p-5">
+      <div className="font-sans px-6 py-8 max-w-7xl mx-auto">
         {loading && <PageLoader page="Groups" />}
         {!loading && (
-          <>
-            <div className="flex justify-between items-center mb-2">
-              <h1 className="font-bold">GROUPS</h1>
-              <Button
-                className="bg-green-primary hover:opacity-90 hover:bg-green-primary"
+          <div className="animate-fade-in">
+            <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
+              <h1 className="font-serif text-4xl md:text-5xl font-bold tracking-tight text-white">
+                Your <span className="text-teal-400">Groups</span>
+              </h1>
+              <button
+                type="button"
+                className="px-8 py-3 bg-teal-400 text-navy-900 font-sans font-semibold rounded-full shadow-glow hover:bg-teal-300 hover:-translate-y-1 transition-all duration-300"
                 onClick={() => setOpenModal(true)}
               >
-                Create
-              </Button>
+                Create Group
+              </button>
             </div>
-            <hr className="my-4" />
+            <hr className="border-slate-600/50 mb-8" />
             {groups && groups.length > 0 ? (
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5 items-stretch">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6 items-stretch">
                 {groups.map((group: Group) => (
                   <GroupCard
                     key={group._id}
@@ -51,23 +54,22 @@ function Groups() {
                 ))}
               </div>
             ) : (
-              <div className="mt-8 flex flex-col justify-center items-center">
-                <img src={NullImg} alt="" className="w-1/4" />
-                <div className="null-text mt-2 flex flex-col justify-center items-center text-center">
-                  <h2 className="text-xl font-semibold">No groups created.</h2>
-                  <div className="text-muted-foreground">
-                    Please create one to get started.
-                  </div>
-                </div>
-                <Button
-                  className="mt-4 bg-green-primary hover:opacity-90 hover:bg-green-primary"
+              <div className="mt-12 py-16 flex flex-col justify-center items-center text-center rounded-2xl border border-dashed border-slate-600 bg-navy-900/50">
+                <img src={NullImg} alt="" className="w-48 h-auto opacity-80" />
+                <h2 className="mt-6 text-2xl font-serif font-semibold text-white">No groups created.</h2>
+                <p className="mt-2 text-slate-400 font-sans text-lg max-w-sm">
+                  Please create one to get started.
+                </p>
+                <button
+                  type="button"
+                  className="mt-6 px-8 py-3 bg-teal-400 text-navy-900 font-sans font-semibold rounded-full shadow-glow hover:bg-teal-300 hover:-translate-y-1 transition-all duration-300"
                   onClick={() => setOpenModal(true)}
                 >
-                  Create
-                </Button>
+                  Create Group
+                </button>
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
       <GroupModal open={openModal} setOpen={setOpenModal} />
