@@ -53,7 +53,7 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
   useEffect(() => {
     const hasName = expenseName.trim() !== '';
     const hasAmount = !!amount;
-    setDisableAdd(!(hasName && amount));
+    setDisableAdd(!(hasName && hasAmount));
   }, [expenseName, amount, paidBy, sharedBy]);
 
   const onCloseClick = () => {
