@@ -1,35 +1,44 @@
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  Button,
-  FloatingLabel,
-  Form,
-  FormControl,
-  InputGroup,
-  ListGroup,
-  Offcanvas,
-} from 'react-bootstrap';
 import { IoListOutline } from 'react-icons/io5';
-import { useAppDispatch } from 'src/state/stateHooks';
+import { useGroupStore } from 'src/store/useGroupStore';
+import { Group } from 'src/indexTypes';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-import './AddExpense.scss';
+type MemberWithFlags = { _id: string; name: string; share: number; paid: number; hasPaid?: boolean; hasShare?: boolean };
 
-function AddExpense({ show, handleClose, group }: any) {
-  const dispatch = useAppDispatch();
+interface AddExpenseProps {
+  show: boolean;
+  handleClose: () => void;
+  group: Group;
+}
+
+function AddExpense({ show, handleClose, group }: AddExpenseProps) {
+  const addExpense = useGroupStore((state) => state.addExpense);
 
   const [expenseName, setExpenseName] = useState<string>('');
   const [amount, setAmount] = useState<number | null>(null);
-  const [members, setMembers] = useState<any[]>([]);
-  const [paidBy, setPaidBy] = useState<any[]>([]);
-  const [sharedBy, setSharedBy] = useState<any[]>([]);
+  const [members, setMembers] = useState<MemberWithFlags[]>([]);
+  const [paidBy, setPaidBy] = useState<MemberWithFlags[]>([]);
+  const [sharedBy, setSharedBy] = useState<MemberWithFlags[]>([]);
   const [showSelectPaidBy, setShowSelectPaidBy] = useState<boolean>(false);
   const [showSelectSharedBy, setShowSelectSharedBy] = useState<boolean>(false);
   const [disableAdd, setDisableAdd] = useState<boolean>(true);
 
   useEffect(() => {
-    const memberState = group.members.map((mem: any) => {
-      return { ...mem, hasPaid: false, hasShare: false };
-    });
+    const memberState: MemberWithFlags[] = group.members.map((mem) => ({
+      ...mem,
+      hasPaid: false,
+      hasShare: false,
+    }));
     setMembers(memberState);
   }, [group.members, show]);
 
@@ -47,38 +56,29 @@ function AddExpense({ show, handleClose, group }: any) {
     setSharedBy([]);
   };
 
-  const handleNameChange = (e: any) => {
-    e.preventDefault();
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setExpenseName(e.target.value);
   };
 
-  const handleAmountChange = (e: any) => {
-    e.preventDefault();
-    setAmount(parseInt(e.target.value));
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setAmount(val === '' ? null : parseInt(val, 10));
   };
 
-  const handlePaidBySelect = (e: any, mem: any) => {
-    setMembers((prevState) => {
-      const nextState = prevState.map((el) => {
-        if (el.id === mem.id) {
-          el.hasPaid = e.target.checked;
-        }
-        return el;
-      });
-      return nextState;
-    });
+  const handlePaidBySelect = (e: React.ChangeEvent<HTMLInputElement>, mem: MemberWithFlags) => {
+    setMembers((prevState) =>
+      prevState.map((el) =>
+        el._id === mem._id ? { ...el, hasPaid: e.target.checked } : el
+      )
+    );
   };
 
-  const handleSharedBySelect = (e: any, mem: any) => {
-    setMembers((prevState) => {
-      const nextState = prevState.map((el) => {
-        if (el.id === mem.id) {
-          el.hasShare = e.target.checked;
-        }
-        return el;
-      });
-      return nextState;
-    });
+  const handleSharedBySelect = (e: React.ChangeEvent<HTMLInputElement>, mem: MemberWithFlags) => {
+    setMembers((prevState) =>
+      prevState.map((el) =>
+        el._id === mem._id ? { ...el, hasShare: e.target.checked } : el
+      )
+    );
   };
 
   const handleAddPaidBy = () => {
@@ -91,201 +91,183 @@ function AddExpense({ show, handleClose, group }: any) {
     setShowSelectSharedBy(false);
   };
 
+  const handleSelectAllSharedBy = () => {
+    setMembers((prev) => prev.map((el) => ({ ...el, hasShare: true })));
+  };
+
   const handleSubmit = () => {
     const payload = {
       id: uuidv4(),
-      groupId: group.id,
+      groupId: group._id,
       name: expenseName,
-      amount,
-      paidBy: paidBy.map((mem) => mem.id),
-      sharedBy: sharedBy.map((mem) => mem.id),
+      amount: amount ?? 0,
+      paidBy: paidBy.map((mem) => ({ id: mem._id })),
+      sharedBy: sharedBy.map((mem) => ({ id: mem._id })),
     };
-    dispatch({
-      type: 'ADD_EXPENSE',
-      payload,
-    });
+    addExpense(payload);
     onCloseClick();
   };
 
+  const paidByDisplay =
+    paidBy.length > 0
+      ? `${paidBy[0].name}${paidBy.length > 1 ? ` + ${paidBy.length - 1}` : ''}`
+      : '';
+  const sharedByDisplay =
+    sharedBy.length > 0
+      ? `${sharedBy[0].name}${sharedBy.length > 1 ? ` + ${sharedBy.length - 1}` : ''}`
+      : '';
+
   return (
-    <div>
-      <Offcanvas show={show} onHide={onCloseClick} placement="end">
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>
+    <Sheet open={show} onOpenChange={(open) => !open && onCloseClick()}>
+      <SheetContent side="right" className="flex flex-col w-full sm:max-w-md">
+        <SheetHeader className="space-y-1.5 pb-4">
+          <SheetTitle className="text-xl">
             {showSelectPaidBy || showSelectSharedBy
               ? 'Select Member(s)'
               : 'Add Expense'}
-          </Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
+          </SheetTitle>
+        </SheetHeader>
+        <div className="flex-1 overflow-auto py-2 scrollbar-thin transition-opacity duration-200">
           {!showSelectPaidBy && !showSelectSharedBy && (
-            <div className="add-expense-wrapper">
-              <Form>
-                <Form.Group className="mb-3" controlId="formExpenseName">
-                  <div className="expense-name">
-                    <FloatingLabel
-                      controlId="floatingInput"
-                      label="Name of expense"
-                      className="mb-3"
-                    >
-                      <FormControl
-                        value={expenseName}
-                        placeholder="Enter a name for the expense."
-                        onChange={handleNameChange}
-                        aria-label="Default"
-                        aria-describedby="inputGroup-sizing-default"
-                      />
-                    </FloatingLabel>
-                  </div>
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="formExpenseAmount">
-                  <div className="expense-amount">
-                    <FloatingLabel
-                      controlId="floatingInput"
-                      label="Amount"
-                      className="mb-3"
-                    >
-                      <FormControl
-                        value={amount || 0}
-                        placeholder="Enter amount."
-                        onChange={handleAmountChange}
-                        type="number"
-                        aria-label="Default"
-                        aria-describedby="inputGroup-sizing-default"
-                      />
-                    </FloatingLabel>
-                  </div>
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="formExpensePaidBy">
-                  <Form.Label>Paid by</Form.Label>
-                  <div className="expense-made-by">
-                    <InputGroup className="mb-3">
-                      <FormControl
-                        value={
-                          paidBy.length
-                            ? `${paidBy[0].name} ${
-                                paidBy.length > 1
-                                  ? `+ ${paidBy.length - 1}`
-                                  : ''
-                              } `
-                            : ''
-                        }
-                        placeholder="Select members"
-                        aria-label="Default"
-                        aria-describedby="inputGroup-sizing-default"
-                        readOnly
-                      />
-                      <Button onClick={() => setShowSelectPaidBy(true)}>
-                        Select
-                      </Button>
-                    </InputGroup>
-                  </div>
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="formExpensePaidBy">
-                  <Form.Label>Shared by</Form.Label>
-                  <div className="expense-shared-by">
-                    <InputGroup className="mb-3">
-                      <FormControl
-                        value={
-                          sharedBy.length
-                            ? `${sharedBy[0].name} ${
-                                sharedBy.length > 1
-                                  ? `+ ${sharedBy.length - 1}`
-                                  : ''
-                              } `
-                            : ''
-                        }
-                        placeholder="Select members"
-                        aria-label="Default"
-                        aria-describedby="inputGroup-sizing-default"
-                        readOnly
-                      />
-                      <Button onClick={() => setShowSelectSharedBy(true)}>
-                        Select
-                      </Button>
-                    </InputGroup>
-                  </div>
-                </Form.Group>
-
-                <div className="add-btn">
+            <div className="space-y-5 animate-in fade-in-0 duration-200">
+              <div className="space-y-2">
+                <Label htmlFor="expense-name" className="text-sm font-medium">Name of expense</Label>
+                <Input
+                  id="expense-name"
+                  value={expenseName}
+                  placeholder="Enter a name for the expense."
+                  onChange={handleNameChange}
+                  aria-label="Expense name"
+                  className="transition-colors focus-visible:ring-2 focus-visible:ring-green-primary/50"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="expense-amount" className="text-sm font-medium">Amount</Label>
+                <Input
+                  id="expense-amount"
+                  value={amount ?? ''}
+                  placeholder="Enter amount."
+                  onChange={handleAmountChange}
+                  type="number"
+                  aria-label="Amount"
+                  className="transition-colors focus-visible:ring-2 focus-visible:ring-green-primary/50"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Paid by</Label>
+                <div className="flex gap-3">
+                  <Input
+                    value={paidByDisplay}
+                    placeholder="Select members"
+                    readOnly
+                    className="flex-1 bg-muted/80 border-border transition-colors"
+                  />
                   <Button
-                    variant="success"
-                    onClick={handleSubmit}
-                    disabled={disableAdd}
+                    onClick={() => setShowSelectPaidBy(true)}
+                    variant="outline"
+                    className="shrink-0 transition-all duration-200"
                   >
-                    Add
+                    Select
                   </Button>
                 </div>
-              </Form>
-
-              {/* <div className="expense-date">
-              <InputGroup className="mb-3">
-                <InputGroup.Text>Date</InputGroup.Text>
-                <FormControl
-                  type="date"
-                  aria-label="Default"
-                  aria-describedby="inputGroup-sizing-default"
-                />
-              </InputGroup>
-            </div> */}
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Shared by</Label>
+                <div className="flex gap-3">
+                  <Input
+                    value={sharedByDisplay}
+                    placeholder="Select members"
+                    readOnly
+                    className="flex-1 bg-muted/80 border-border transition-colors"
+                  />
+                  <Button
+                    onClick={() => setShowSelectSharedBy(true)}
+                    variant="outline"
+                    className="shrink-0 transition-all duration-200"
+                  >
+                    Select
+                  </Button>
+                </div>
+              </div>
+              <div className="flex justify-end pt-4">
+                <Button
+                  onClick={handleSubmit}
+                  disabled={disableAdd}
+                  className="bg-green-primary hover:bg-green-primary/90 transition-all duration-200 disabled:opacity-50"
+                >
+                  Add
+                </Button>
+              </div>
             </div>
           )}
 
           {showSelectPaidBy && (
-            <div className="select-paid-by">
-              <ListGroup className="member-list-wrap">
-                {members.map((mem: any) => (
-                  <ListGroup.Item key={mem.id} className="member-list-item">
-                    <div className="member-wrap">
-                      <Form.Check
-                        onChange={(e) => handlePaidBySelect(e, mem)}
-                      />
-                      <span>{mem.name}</span>
-                    </div>
-                  </ListGroup.Item>
+            <div className="space-y-5 animate-in fade-in-0 duration-200">
+              <div className="space-y-1">
+                {members.map((mem) => (
+                  <div
+                    key={mem._id}
+                    className="flex items-center gap-3 py-2.5 px-2 rounded-lg hover:bg-muted/50 border-b border-border/50 last:border-b-0 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      id={`paid-${mem._id}`}
+                      onChange={(e) => handlePaidBySelect(e, mem)}
+                      className="h-4 w-4 rounded border-input accent-green-primary transition-colors"
+                    />
+                    <Label htmlFor={`paid-${mem._id}`} className="flex-1 cursor-pointer font-medium">
+                      {mem.name}
+                    </Label>
+                  </div>
                 ))}
-              </ListGroup>
-
-              <div className="add-paidBy-btn">
-                <Button onClick={handleAddPaidBy}>Done</Button>
+              </div>
+              <div className="flex justify-end pt-2">
+                <Button onClick={handleAddPaidBy} className="bg-green-primary hover:bg-green-primary/90 transition-all duration-200">
+                  Done
+                </Button>
               </div>
             </div>
           )}
 
           {showSelectSharedBy && (
-            <div className="select-shared-by">
-              <div className="select-all d-flex justify-content-end align-items-center mb-3">
-                <IoListOutline className="select-all-icon" />
-                <IoListOutline
-                  className="select-all-hover-icon"
-                  stroke="#41b4a5"
-                />
-                <span className="ml-1">Select all</span>
-              </div>
-              <ListGroup className="member-list-wrap">
-                {group.members.map((mem: any) => (
-                  <ListGroup.Item key={mem.id} className=" member-list-item">
-                    <div className="member-wrap">
-                      <Form.Check
-                        onChange={(e) => handleSharedBySelect(e, mem)}
-                        checked={mem.hasShare}
-                      />
-                      <span>{mem.name}</span>
-                    </div>
-                  </ListGroup.Item>
+            <div className="space-y-5 animate-in fade-in-0 duration-200">
+              <button
+                type="button"
+                className="flex items-center justify-end gap-2 w-full py-2 px-2 rounded-lg cursor-pointer hover:text-green-primary hover:bg-muted/50 transition-all duration-200 font-medium"
+                onClick={handleSelectAllSharedBy}
+              >
+                <IoListOutline className="h-4 w-4 text-green-primary" />
+                <span>Select all</span>
+              </button>
+              <div className="space-y-1">
+                {members.map((mem) => (
+                  <div
+                    key={mem._id}
+                    className="flex items-center gap-3 py-2.5 px-2 rounded-lg hover:bg-muted/50 border-b border-border/50 last:border-b-0 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      id={`share-${mem._id}`}
+                      checked={mem.hasShare ?? false}
+                      onChange={(e) => handleSharedBySelect(e, mem)}
+                      className="h-4 w-4 rounded border-input accent-green-primary transition-colors"
+                    />
+                    <Label htmlFor={`share-${mem._id}`} className="flex-1 cursor-pointer font-medium">
+                      {mem.name}
+                    </Label>
+                  </div>
                 ))}
-              </ListGroup>
-              <div className="add-sharedBy-btn">
-                <Button onClick={handleAddSharedBy}>Done</Button>
+              </div>
+              <div className="flex justify-end pt-2">
+                <Button onClick={handleAddSharedBy} className="bg-green-primary hover:bg-green-primary/90 transition-all duration-200">
+                  Done
+                </Button>
               </div>
             </div>
           )}
-        </Offcanvas.Body>
-      </Offcanvas>
-    </div>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 

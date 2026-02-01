@@ -13,14 +13,15 @@ const getGroupIdFromUrl = () => {
   return window.location.pathname.split('group/')[1];
 };
 
-const getItems = (key: string) => {
+const getItems = <T = unknown>(key: string): T[] => {
   const items = JSON.parse(localStorage.getItem(key) || '[]');
   return items;
 };
 
-const updateToLS = (item: any, key: string) => {
+const updateToLS = <T = unknown>(item: any, key: string): T[] => {
   const val = JSON.parse(localStorage.getItem(key) || '[]');
-  const updatedVal = [item, ...val.filter((g: any) => g.id !== item.id)];
+  const itemId = item.id ?? item._id;
+  const updatedVal = [item, ...val.filter((g: any) => (g.id ?? g._id) !== itemId)];
   localStorage.setItem(key, JSON.stringify(updatedVal));
   return updatedVal;
 };

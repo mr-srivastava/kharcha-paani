@@ -1,41 +1,31 @@
 import { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button } from '@/components/ui/button';
 import { AddExpense, ExpenseTable, NavBar, PageLoader } from 'src/components';
-
-import './GroupPage.scss';
 import { getGroupIdFromUrl, formatCurrency, getTotal } from 'src/utils';
-import { useAppDispatch, useAppSelector } from 'src/state/stateHooks';
-import { Expense, Group } from 'src/indexTypes';
+import { useGroupStore } from 'src/store/useGroupStore';
+import { Group } from 'src/indexTypes';
 
 function GroupPage() {
-  const { expenses } = useAppSelector((state) => state.group);
+  const expenses = useGroupStore((state) => state.expenses);
+  const getGroupById = useGroupStore((state) => state.getGroupById);
+
   const id = getGroupIdFromUrl();
 
-  const [group, setGroup] = useState<Group>();
+  const [group, setGroup] = useState<Group | null>(null);
   const [total, setTotal] = useState<number>(0);
   const [show, setShow] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const dispatch = useAppDispatch();
-
   useEffect(() => {
-    async function getGroupById(groupId: string) {
+    async function fetchGroup(groupId: string) {
       setLoading(true);
-      const response = new Promise((resolve, reject) => {
-        dispatch({
-          type: 'GET_GROUP_BY_ID',
-          id: groupId,
-          resolve,
-          reject,
-        });
-      });
-      const groupResp: any = await response;
+      const groupResp = await getGroupById(groupId);
       setLoading(false);
-      setGroup(groupResp);
+      setGroup(groupResp ?? null);
     }
 
-    getGroupById(id);
-  }, []);
+    fetchGroup(id);
+  }, [id, getGroupById]);
 
   useEffect(() => {
     setTotal(getTotal(id, expenses));
@@ -45,34 +35,40 @@ function GroupPage() {
   const handleShow = () => setShow(true);
 
   return (
-    <div className="group-page-wrapper">
+    <div className="min-h-screen bg-background">
       <NavBar showIcon />
       {loading && <PageLoader page="Group" />}
       {group && !loading && (
-        <>
-          <div className="group-page-container">
-            <div className="group-page-header d-flex justify-content-between">
-              <h1 className="group-name">Group : {group.name}</h1>
-              <Button className="add-exp-btn" onClick={handleShow}>
+        <div className="animate-fade-in">
+          <div className="px-6 py-8 max-w-7xl mx-auto">
+            <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                Group: {group.name}
+              </h1>
+              <Button
+                className="bg-green-primary hover:bg-green-primary/90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                onClick={handleShow}
+              >
                 Add Expense
               </Button>
             </div>
-            <hr />
-            <h2>TOTAL: {formatCurrency().format(total)}</h2>
-
-            <div className="overview-container">
+            <hr className="border-border mb-6" />
+            <div className="rounded-xl bg-muted/30 border border-border px-5 py-4 mb-6 inline-block">
+              <span className="text-sm font-medium text-muted-foreground">TOTAL</span>
+              <p className="text-2xl font-bold text-foreground mt-0.5">
+                {formatCurrency().format(total)}
+              </p>
+            </div>
+            <div className="mt-6">
               <ExpenseTable group={group} />
             </div>
           </div>
 
           <AddExpense show={show} handleClose={handleClose} group={group} />
-        </>
+        </div>
       )}
     </div>
   );
 }
 
 export { GroupPage };
-function formatCurr() {
-  throw new Error('Function not implemented.');
-}

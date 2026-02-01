@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LandingPage, GroupPage, Groups } from './pages';
 
-import './App.scss';
 
 const App = () => {
   return (

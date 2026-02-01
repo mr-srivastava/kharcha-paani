@@ -1,14 +1,12 @@
 export const API_URL: { [key: string]: string } = {
-  // development: 'http://localhost:5000',
   development: 'https://kharcha-paani.herokuapp.com',
   production: 'https://kharcha-paani.herokuapp.com',
 };
 
 export const getEnv = (): string => {
-  return process.env.NODE_ENV;
+  return import.meta.env.MODE;
 };
 
 export const getApiUrl = (): string => {
-  const env = getEnv();
-  return API_URL[env];
+  return import.meta.env.VITE_API_URL || API_URL[getEnv()];
 };

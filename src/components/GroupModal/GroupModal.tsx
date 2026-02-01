@@ -1,42 +1,40 @@
 import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
-import {
-  Alert,
-  Button,
-  CloseButton,
-  FloatingLabel,
-  Form,
-  FormControl,
-  ListGroup,
-  Modal,
-} from 'react-bootstrap';
 import {
   IoPerson,
   IoInformationCircleOutline,
   IoCloseOutline,
   IoClose,
 } from 'react-icons/io5';
-import { useAppDispatch } from '../../state/stateHooks';
-
-import './GroupModal.scss';
-import { Group, Member } from 'src/indexTypes';
+import { useGroupStore } from 'src/store/useGroupStore';
+import { Group } from 'src/indexTypes';
 import { remove } from 'lodash';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 type GroupModalProps = {
   edit?: boolean;
   open: boolean;
-  setOpen: Function;
+  setOpen: (open: boolean) => void;
   data?: Group;
 };
 
 function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const updateGroupApi = useGroupStore((state) => state.updateGroupApi);
+  const createGroup = useGroupStore((state) => state.createGroup);
 
   const [groupName, setGroupName] = useState<string>('');
   const [memberText, setMemberText] = useState<string>('');
-  const [members, setMembers] = useState<any[]>([]);
+  const [members, setMembers] = useState<{ name: string; share: number; paid: number }[]>([]);
 
   useEffect(() => {
     if (data) {
@@ -56,38 +54,31 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
           members,
         },
       };
-      dispatch({
-        type: 'UPDATE_GROUP',
-        payload,
-      });
+      await updateGroupApi(payload);
       handleClose();
     } else {
       const groupData = {
         name: groupName,
         members,
       };
-      const response: any = new Promise((resolve, reject) => {
-        dispatch({
-          type: 'ADD_GROUP',
-          payload: groupData,
-          resolve,
-          reject,
-        });
-      });
-      const { id } = await response;
-      handleClose();
-      navigate(`/group/${id}`);
+      try {
+        const response = await createGroup(groupData);
+        handleClose();
+        const id = response?.id ?? response?._id;
+        if (id) {
+          navigate(`/group/${id}`);
+        }
+      } catch {
+        handleClose();
+      }
     }
-    handleClose();
   };
 
-  const handleGroupNameChange = (e: any) => {
-    e.preventDefault();
+  const handleGroupNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setGroupName(e.target.value);
   };
 
-  const handleMemberTextChange = (e: any) => {
-    e.preventDefault();
+  const handleMemberTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMemberText(e.target.value);
   };
 
@@ -102,117 +93,103 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
   };
 
   const handleMemberRemove = (idx: number) => {
-    const updatedMembers = remove(members, (mem) => {
-      return members.indexOf(mem) !== idx;
-    });
+    const updatedMembers = remove([...members], (_, i) => i !== idx);
     setMembers(updatedMembers);
   };
 
   return (
-    <div className="create-group-modal-wrapper">
-      <Modal
-        show={open}
-        dialogClassName="create-group-modal"
-        contentClassName="create-group-modal-content"
-        onHide={handleClose}
-        backdrop="static"
-        keyboard={false}
-        centered
-        size="lg"
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent
+        className="rounded-2xl max-w-lg shadow-xl animate-in fade-in-0 zoom-in-95 duration-200"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        <Modal.Header className="create-group-modal-header" closeButton>
-          <Modal.Title>{`${edit ? 'Edit' : 'Create'} Group`}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="group-name-section">
-            <div className="group-name">
-              <Form.Group className="mb-3" controlId="formGroupName">
-                <FloatingLabel
-                  controlId="floatingInput"
-                  label="Name of group"
-                  className="mb-3"
-                >
-                  <FormControl
-                    value={groupName}
-                    placeholder="Enter a name for the group."
-                    aria-label="GroupName"
-                    aria-describedby="basic-addon1"
-                    onChange={handleGroupNameChange}
-                  />
-                </FloatingLabel>
-              </Form.Group>
-            </div>
+        <DialogHeader className="space-y-1.5 pb-2">
+          <DialogTitle className="text-xl">{`${edit ? 'Edit' : 'Create'} Group`}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-5 py-2">
+          <div className="space-y-2">
+            <Label htmlFor="group-name" className="text-sm font-medium">Name of group</Label>
+            <Input
+              id="group-name"
+              value={groupName}
+              placeholder="Enter a name for the group."
+              onChange={handleGroupNameChange}
+              aria-label="GroupName"
+              className="transition-colors focus-visible:ring-2 focus-visible:ring-green-primary/50"
+            />
           </div>
-          <div className="add-member-section">
-            <Form.Group
-              className="add-member-form mb-3 d-flex align-items-center"
-              controlId="formAddMember"
-            >
-              <FloatingLabel
-                controlId="floatingInput"
-                label="Add Members"
-                className="add-member-input flex-fill"
-              >
-                <FormControl
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <Label htmlFor="add-member" className="sr-only">
+                  Add Members
+                </Label>
+                <Input
+                  id="add-member"
                   value={memberText}
                   placeholder="Add member"
-                  aria-label="Add member"
-                  aria-describedby="basic-addon2"
                   onChange={handleMemberTextChange}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && memberText !== '') {
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && memberText.trim() !== '') {
+                      e.preventDefault();
                       handleMemberAdd();
                     }
                   }}
+                  aria-label="Add member"
+                  className="transition-colors focus-visible:ring-2 focus-visible:ring-green-primary/50"
                 />
-              </FloatingLabel>
+              </div>
               <Button
-                className="ml-1"
-                variant="outline-secondary"
-                id="button-addon2"
+                type="button"
+                variant="outline"
                 onClick={handleMemberAdd}
                 disabled={memberText.trim() === ''}
+                className="transition-all duration-200 shrink-0"
               >
                 Add
               </Button>
-            </Form.Group>
-            <Alert className="add-member-note" variant="warning">
-              <IoInformationCircleOutline />
-              <div className="add-member-note-text">
-                Add atleast one member in the group
-              </div>
-            </Alert>
-            <ListGroup className="member-group-wrap">
+            </div>
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-800 transition-colors">
+              <IoInformationCircleOutline className="h-5 w-5 shrink-0" />
+              <span className="text-sm">
+                Add at least one member in the group
+              </span>
+            </div>
+            <div className="h-[206px] overflow-auto scrollbar-thin border rounded-xl bg-muted/30">
               {members.map((mem, idx) => (
-                <ListGroup.Item
+                <div
                   key={`${mem.name}_${idx}`}
-                  className="member-list-wrap"
+                  className="flex items-center justify-between px-3 py-2.5 hover:bg-muted/60 dark:hover:bg-muted/40 border-b border-border/50 last:border-b-0 transition-colors duration-150"
                 >
-                  <div className="member-list-item">
-                    <div className="member-wrap">
-                      <IoPerson />
-                      <span>{mem.name}</span>
-                    </div>
-                    <div
-                      className="close-btn"
-                      onClick={() => handleMemberRemove(idx)}
-                    >
-                      <IoCloseOutline className="x-icon" />
-                      <IoClose className="x-icon-hover" />
-                    </div>
-                    {/* <CloseButton onClick={() => handleMemberRemove(mem.id)} /> */}
+                  <div className="flex items-center gap-2.5">
+                    <IoPerson className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">{mem.name}</span>
                   </div>
-                </ListGroup.Item>
+                  <button
+                    type="button"
+                    className="group p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-150 inline-flex items-center focus-visible:ring-2 focus-visible:ring-ring"
+                    onClick={() => handleMemberRemove(idx)}
+                    aria-label="Remove member"
+                  >
+                    <IoCloseOutline className="h-5 w-5 block group-hover:hidden" />
+                    <IoClose className="h-5 w-5 hidden group-hover:block" />
+                  </button>
+                </div>
               ))}
-            </ListGroup>
+            </div>
           </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={onDoneClick}>Save</Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+        </div>
+        <DialogFooter className="gap-2 pt-4 sm:pt-4">
+          <Button variant="outline" onClick={handleClose} className="transition-all duration-200">
+            Cancel
+          </Button>
+          <Button onClick={onDoneClick} className="bg-green-primary hover:bg-green-primary/90 transition-all duration-200">
+            Save
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
