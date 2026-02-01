@@ -40,7 +40,7 @@ function GroupCard(props: GroupCardProps) {
   const total = expenses ? getTotal(data._id, expenses) : 0;
 
   return (
-    <Card className="max-w-[300px] min-h-[200px] shadow-xl rounded-2xl overflow-hidden transition-all duration-200 ease-smooth hover:shadow-2xl hover:-translate-y-1 hover:shadow-card-hover">
+    <Card className="max-w-[300px] min-h-[200px] shadow-xl rounded-2xl overflow-hidden transition-all duration-200 ease-smooth hover:-translate-y-1 hover:shadow-card-hover">
       <CardContent className="relative bg-blue-dark rounded-2xl text-white p-6 overflow-hidden">
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
         <CardTitle className="relative flex justify-between items-center mb-0">

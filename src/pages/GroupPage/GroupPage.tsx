@@ -2,11 +2,20 @@ import { useMemo, useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import type { Id } from 'src/indexTypes';
-import { AddExpense, ExpenseTable, NavBar, PageLoader } from 'src/components';
+import { AddExpense, NavBar, PageLoader } from 'src/components';
 import { getGroupIdFromUrl, formatCurrency, getTotal } from 'src/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  ItemGroup,
+  Item,
+  ItemContent,
+  ItemTitle,
+  ItemDescription,
+  ItemSeparator,
+} from '@/components/ui/item';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 function GroupPage() {
   const rawId = getGroupIdFromUrl();
@@ -61,9 +70,127 @@ function GroupPage() {
                 </p>
               </CardContent>
             </Card>
-            <div className="mt-6">
-              <ExpenseTable group={group} />
-            </div>
+
+            <Tabs defaultValue="balances" className="w-full">
+              <TabsList className="mb-4 bg-navy-900/50 border border-slate-600 rounded-lg p-1">
+                <TabsTrigger
+                  value="balances"
+                  className="data-[state=active]:bg-teal-400 data-[state=active]:text-navy-900 data-[state=active]:shadow text-slate-300 rounded-md px-4 py-2"
+                >
+                  Balances
+                </TabsTrigger>
+                <TabsTrigger
+                  value="expenses"
+                  className="data-[state=active]:bg-teal-400 data-[state=active]:text-navy-900 data-[state=active]:shadow text-slate-300 rounded-md px-4 py-2"
+                >
+                  Expenses
+                </TabsTrigger>
+                <TabsTrigger
+                  value="shares"
+                  className="data-[state=active]:bg-teal-400 data-[state=active]:text-navy-900 data-[state=active]:shadow text-slate-300 rounded-md px-4 py-2"
+                >
+                  Shares
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="balances" className="mt-0">
+                <ItemGroup className="gap-2">
+                  {group.members?.length > 0 &&
+                    group.members.map((mem, idx) => {
+                      const balance = mem.paid - mem.share;
+                      const label =
+                        balance >= 0
+                          ? `Gets ${formatCurrency().format(balance)}`
+                          : `Owes ${formatCurrency().format(Math.abs(balance))}`;
+                      return (
+                        <span key={mem.id ?? mem.name ?? idx}>
+                          {idx > 0 && (
+                            <ItemSeparator className="bg-slate-600/50" />
+                          )}
+                          <Item
+                            variant="outline"
+                            size="sm"
+                            className="border-slate-600 bg-navy-900/50 text-white"
+                          >
+                            <ItemContent>
+                              <ItemTitle className="text-white">
+                                {mem.name}
+                              </ItemTitle>
+                              <ItemDescription className="text-slate-300">
+                                {label}
+                              </ItemDescription>
+                            </ItemContent>
+                          </Item>
+                        </span>
+                      );
+                    })}
+                </ItemGroup>
+              </TabsContent>
+              <TabsContent value="expenses" className="mt-0">
+                <ItemGroup className="gap-2">
+                  {expenses && expenses.length > 0 ? (
+                    expenses.map((exp, idx) => (
+                      <span key={exp._id}>
+                        {idx > 0 && (
+                          <ItemSeparator className="bg-slate-600/50" />
+                        )}
+                        <Item
+                          variant="outline"
+                          size="sm"
+                          className="border-slate-600 bg-navy-900/50 text-white"
+                        >
+                          <ItemContent>
+                            <ItemTitle className="text-white">
+                              {exp.name}
+                            </ItemTitle>
+                            <ItemDescription className="text-slate-300">
+                              {formatCurrency().format(exp.amount)} · Paid by:{' '}
+                              {exp.paidBy.map((p) => p.name).join(', ')} ·
+                              Shared by:{' '}
+                              {exp.sharedBy.map((s) => s.name).join(', ')}
+                            </ItemDescription>
+                          </ItemContent>
+                        </Item>
+                      </span>
+                    ))
+                  ) : (
+                    <Item variant="muted" size="sm" className="text-slate-400">
+                      <ItemContent>
+                        <ItemDescription>No expenses yet.</ItemDescription>
+                      </ItemContent>
+                    </Item>
+                  )}
+                </ItemGroup>
+              </TabsContent>
+              <TabsContent value="shares" className="mt-0">
+                <ItemGroup className="gap-2">
+                  {group.members?.length > 0 &&
+                    group.members.map((mem, idx) => {
+                      const share = mem.paid - mem.share;
+                      return (
+                        <span key={mem.id ?? mem.name ?? idx}>
+                          {idx > 0 && (
+                            <ItemSeparator className="bg-slate-600/50" />
+                          )}
+                          <Item
+                            variant="outline"
+                            size="sm"
+                            className="border-slate-600 bg-navy-900/50 text-white"
+                          >
+                            <ItemContent>
+                              <ItemTitle className="text-white">
+                                {mem.name}
+                              </ItemTitle>
+                              <ItemDescription className="text-slate-300">
+                                Share: {formatCurrency().format(share)}
+                              </ItemDescription>
+                            </ItemContent>
+                          </Item>
+                        </span>
+                      );
+                    })}
+                </ItemGroup>
+              </TabsContent>
+            </Tabs>
 
             <AddExpense show={show} handleClose={handleClose} group={group} />
           </div>
