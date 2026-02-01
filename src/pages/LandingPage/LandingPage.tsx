@@ -2,6 +2,7 @@ import { useState } from 'react';
 import walletImg from '../../assets/images/wallet.svg';
 import { GroupModal, NavBar } from 'src/components';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -33,20 +34,21 @@ const LandingPage = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mt-8" aria-label="Landing actions">
-                <button
+                <Button
                   type="button"
                   className="px-8 py-4 bg-teal-400 text-navy-900 font-sans font-semibold rounded-full shadow-glow hover:bg-teal-300 hover:-translate-y-1 transition-all duration-300"
                   onClick={() => setOpenModal(true)}
                 >
                   Create a Group
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="outline"
                   className="px-8 py-4 bg-transparent text-white font-sans font-medium rounded-full border border-slate-600 hover:border-slate-400 hover:bg-white/5 transition-all duration-300"
                   onClick={() => navigate('/groups')}
                 >
                   View Groups
-                </button>
+                </Button>
               </div>
             </div>
 

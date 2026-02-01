@@ -1,72 +1,201 @@
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { AddExpense, ExpenseTable, NavBar, PageLoader } from 'src/components';
+import { useMemo, useState } from 'react';
+import { useQuery } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
+import type { Id } from 'src/indexTypes';
+import { AddExpense, NavBar, PageLoader } from 'src/components';
 import { getGroupIdFromUrl, formatCurrency, getTotal } from 'src/utils';
-import { useGroupStore } from 'src/store/useGroupStore';
-import { Group } from 'src/indexTypes';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  ItemGroup,
+  Item,
+  ItemContent,
+  ItemTitle,
+  ItemDescription,
+  ItemSeparator,
+} from '@/components/ui/item';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 function GroupPage() {
-  const expenses = useGroupStore((state) => state.expenses);
-  const getGroupById = useGroupStore((state) => state.getGroupById);
+  const rawId = getGroupIdFromUrl();
+  const id = rawId ? (rawId as Id<'groups'>) : undefined;
+  const group = useQuery(
+    api.groups.get,
+    id ? { id } : 'skip'
+  );
+  const expenses = useQuery(
+    api.expenses.listByGroup,
+    id ? { groupId: id } : 'skip'
+  );
 
-  const id = getGroupIdFromUrl();
-
-  const [group, setGroup] = useState<Group | null>(null);
-  const [total, setTotal] = useState<number>(0);
   const [show, setShow] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    async function fetchGroup(groupId: string) {
-      setLoading(true);
-      const groupResp = await getGroupById(groupId);
-      setLoading(false);
-      setGroup(groupResp ?? null);
-    }
-
-    fetchGroup(id);
-  }, [id, getGroupById]);
-
-  useEffect(() => {
-    setTotal(getTotal(id, expenses));
-  }, [expenses, id]);
+  const loading = id ? group === undefined : false;
+  const total = useMemo(
+    () => (expenses && id ? getTotal(id, expenses) : 0),
+    [expenses, id]
+  );
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-navy-800">
       <NavBar showIcon />
-      {loading && <PageLoader page="Group" />}
-      {group && !loading && (
-        <div className="animate-fade-in">
-          <div className="px-6 py-8 max-w-7xl mx-auto">
-            <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                Group: {group.name}
+      <div className="font-sans px-6 py-8 max-w-7xl mx-auto">
+        {loading && <PageLoader page="Group" />}
+        {group && !loading && (
+          <div className="animate-fade-in">
+            <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
+              <h1 className="font-serif text-4xl md:text-5xl font-bold tracking-tight text-white">
+                Group: <span className="text-teal-400">{group.name}</span>
               </h1>
               <Button
-                className="bg-green-primary hover:bg-green-primary/90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                type="button"
+                className="px-8 py-3 bg-teal-400 text-navy-900 font-sans font-semibold rounded-full shadow-glow hover:bg-teal-300 hover:-translate-y-1 transition-all duration-300"
                 onClick={handleShow}
               >
                 Add Expense
               </Button>
             </div>
-            <hr className="border-border mb-6" />
-            <div className="rounded-xl bg-muted/30 border border-border px-5 py-4 mb-6 inline-block">
-              <span className="text-sm font-medium text-muted-foreground">TOTAL</span>
-              <p className="text-2xl font-bold text-foreground mt-0.5">
-                {formatCurrency().format(total)}
-              </p>
-            </div>
-            <div className="mt-6">
-              <ExpenseTable group={group} />
-            </div>
-          </div>
+            <Separator className="mb-8 bg-slate-600/50" />
+            <Card className="rounded-xl bg-navy-900/50 border-slate-600 px-5 py-4 mb-8 inline-block">
+              <CardHeader className="p-0 space-y-0">
+                <span className="text-sm font-medium text-slate-400">TOTAL</span>
+              </CardHeader>
+              <CardContent className="p-0 mt-0.5">
+                <p className="text-2xl font-bold text-white">
+                  {formatCurrency().format(total)}
+                </p>
+              </CardContent>
+            </Card>
 
-          <AddExpense show={show} handleClose={handleClose} group={group} />
-        </div>
-      )}
+            <Tabs defaultValue="balances" className="w-full">
+              <TabsList className="mb-4 bg-navy-900/50 border border-slate-600 rounded-lg p-1">
+                <TabsTrigger
+                  value="balances"
+                  className="data-[state=active]:bg-teal-400 data-[state=active]:text-navy-900 data-[state=active]:shadow text-slate-300 rounded-md px-4 py-2"
+                >
+                  Balances
+                </TabsTrigger>
+                <TabsTrigger
+                  value="expenses"
+                  className="data-[state=active]:bg-teal-400 data-[state=active]:text-navy-900 data-[state=active]:shadow text-slate-300 rounded-md px-4 py-2"
+                >
+                  Expenses
+                </TabsTrigger>
+                <TabsTrigger
+                  value="shares"
+                  className="data-[state=active]:bg-teal-400 data-[state=active]:text-navy-900 data-[state=active]:shadow text-slate-300 rounded-md px-4 py-2"
+                >
+                  Shares
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="balances" className="mt-0">
+                <ItemGroup className="gap-2">
+                  {group.members?.length > 0 &&
+                    group.members.map((mem, idx) => {
+                      const balance = mem.paid - mem.share;
+                      const label =
+                        balance >= 0
+                          ? `Gets ${formatCurrency().format(balance)}`
+                          : `Owes ${formatCurrency().format(Math.abs(balance))}`;
+                      return (
+                        <span key={mem.id ?? mem.name ?? idx}>
+                          {idx > 0 && (
+                            <ItemSeparator className="bg-slate-600/50" />
+                          )}
+                          <Item
+                            variant="outline"
+                            size="sm"
+                            className="border-slate-600 bg-navy-900/50 text-white"
+                          >
+                            <ItemContent>
+                              <ItemTitle className="text-white">
+                                {mem.name}
+                              </ItemTitle>
+                              <ItemDescription className="text-slate-300">
+                                {label}
+                              </ItemDescription>
+                            </ItemContent>
+                          </Item>
+                        </span>
+                      );
+                    })}
+                </ItemGroup>
+              </TabsContent>
+              <TabsContent value="expenses" className="mt-0">
+                <ItemGroup className="gap-2">
+                  {expenses && expenses.length > 0 ? (
+                    expenses.map((exp, idx) => (
+                      <span key={exp._id}>
+                        {idx > 0 && (
+                          <ItemSeparator className="bg-slate-600/50" />
+                        )}
+                        <Item
+                          variant="outline"
+                          size="sm"
+                          className="border-slate-600 bg-navy-900/50 text-white"
+                        >
+                          <ItemContent>
+                            <ItemTitle className="text-white">
+                              {exp.name}
+                            </ItemTitle>
+                            <ItemDescription className="text-slate-300">
+                              {formatCurrency().format(exp.amount)} · Paid by:{' '}
+                              {exp.paidBy.map((p) => p.name).join(', ')} ·
+                              Shared by:{' '}
+                              {exp.sharedBy.map((s) => s.name).join(', ')}
+                            </ItemDescription>
+                          </ItemContent>
+                        </Item>
+                      </span>
+                    ))
+                  ) : (
+                    <Item variant="muted" size="sm" className="text-slate-400">
+                      <ItemContent>
+                        <ItemDescription>No expenses yet.</ItemDescription>
+                      </ItemContent>
+                    </Item>
+                  )}
+                </ItemGroup>
+              </TabsContent>
+              <TabsContent value="shares" className="mt-0">
+                <ItemGroup className="gap-2">
+                  {group.members?.length > 0 &&
+                    group.members.map((mem, idx) => {
+                      const share = mem.paid - mem.share;
+                      return (
+                        <span key={mem.id ?? mem.name ?? idx}>
+                          {idx > 0 && (
+                            <ItemSeparator className="bg-slate-600/50" />
+                          )}
+                          <Item
+                            variant="outline"
+                            size="sm"
+                            className="border-slate-600 bg-navy-900/50 text-white"
+                          >
+                            <ItemContent>
+                              <ItemTitle className="text-white">
+                                {mem.name}
+                              </ItemTitle>
+                              <ItemDescription className="text-slate-300">
+                                Share: {formatCurrency().format(share)}
+                              </ItemDescription>
+                            </ItemContent>
+                          </Item>
+                        </span>
+                      );
+                    })}
+                </ItemGroup>
+              </TabsContent>
+            </Tabs>
+
+            <AddExpense show={show} handleClose={handleClose} group={group} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
