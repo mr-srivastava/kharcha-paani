@@ -1,6 +1,6 @@
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
-import type { Group, GroupsData } from 'src/indexTypes';
+import type { GroupsData } from 'src/indexTypes';
 
 /**
  * Custom hook that fetches groups list and derives loading/empty state.
