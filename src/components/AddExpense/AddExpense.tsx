@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import { ChevronsUpDown } from 'lucide-react';
-import { Group } from 'src/indexTypes';
+import type { Group, Member } from 'src/indexTypes';
 import {
   Sheet,
   SheetContent,
@@ -28,8 +28,6 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 
-type MemberWithFlags = { id?: string; name: string; share: number; paid: number };
-
 interface AddExpenseProps {
   show: boolean;
   handleClose: () => void;
@@ -41,9 +39,9 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
 
   const [expenseName, setExpenseName] = useState<string>('');
   const [amount, setAmount] = useState<number | null>(null);
-  const [members, setMembers] = useState<MemberWithFlags[]>([]);
-  const [paidBy, setPaidBy] = useState<MemberWithFlags[]>([]);
-  const [sharedBy, setSharedBy] = useState<MemberWithFlags[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [paidBy, setPaidBy] = useState<Member[]>([]);
+  const [sharedBy, setSharedBy] = useState<Member[]>([]);
   const [disableAdd, setDisableAdd] = useState<boolean>(true);
 
   useEffect(() => {
@@ -73,14 +71,14 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
     setAmount(val === '' ? null : parseInt(val, 10));
   };
 
-  const memberKey = (mem: MemberWithFlags) => mem.id ?? mem.name;
+  const memberKey = (mem: Member) => mem.id ?? mem.name;
 
-  const isPaidBy = (mem: MemberWithFlags) =>
+  const isPaidBy = (mem: Member) =>
     paidBy.some((m) => memberKey(m) === memberKey(mem));
-  const isSharedBy = (mem: MemberWithFlags) =>
+  const isSharedBy = (mem: Member) =>
     sharedBy.some((m) => memberKey(m) === memberKey(mem));
 
-  const togglePaidBy = (mem: MemberWithFlags) => {
+  const togglePaidBy = (mem: Member) => {
     setPaidBy((prev) =>
       isPaidBy(mem)
         ? prev.filter((m) => memberKey(m) !== memberKey(mem))
@@ -88,7 +86,7 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
     );
   };
 
-  const toggleSharedBy = (mem: MemberWithFlags) => {
+  const toggleSharedBy = (mem: Member) => {
     setSharedBy((prev) =>
       isSharedBy(mem)
         ? prev.filter((m) => memberKey(m) !== memberKey(mem))

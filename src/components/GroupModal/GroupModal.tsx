@@ -8,7 +8,7 @@ import {
   IoCloseOutline,
   IoClose,
 } from 'react-icons/io5';
-import { Group } from 'src/indexTypes';
+import type { Group, Member } from 'src/indexTypes';
 import { remove } from 'lodash';
 import {
   Dialog,
@@ -37,7 +37,7 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
 
   const [groupName, setGroupName] = useState<string>('');
   const [memberText, setMemberText] = useState<string>('');
-  const [members, setMembers] = useState<{ id?: string; name: string; share: number; paid: number }[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
 
   useEffect(() => {
     if (data) {
