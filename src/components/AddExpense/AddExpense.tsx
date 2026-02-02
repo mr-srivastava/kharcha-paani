@@ -142,7 +142,7 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
                 placeholder="Enter a name for the expense."
                 onChange={handleNameChange}
                 aria-label="Expense name"
-                className="transition-colors focus-visible:ring-2 focus-visible:ring-green-primary/50"
+                className="transition-colors focus-visible:ring-2 focus-visible:ring-primary/50"
               />
             </div>
             <div className="space-y-2">
@@ -156,7 +156,7 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
                 onChange={handleAmountChange}
                 type="number"
                 aria-label="Amount"
-                className="transition-colors focus-visible:ring-2 focus-visible:ring-green-primary/50"
+                className="transition-colors focus-visible:ring-2 focus-visible:ring-primary/50"
               />
             </div>
             <div className="space-y-2">
@@ -247,7 +247,7 @@ function AddExpense({ show, handleClose, group }: AddExpenseProps) {
               <Button
                 onClick={handleSubmit}
                 disabled={disableAdd}
-                className="bg-green-primary hover:bg-green-primary/90 transition-all duration-200 disabled:opacity-50"
+                className="bg-primary hover:bg-primary/90 transition-all duration-200 disabled:opacity-50"
               >
                 Add
               </Button>

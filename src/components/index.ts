@@ -1,5 +1,6 @@
 export { AddExpense } from './AddExpense';
 export { NavBar } from './NavBar';
+export { PageLayout } from './PageLayout';
 export { GroupCard } from './GroupCard';
 export { GroupModal } from './GroupModal';
 export { PageLoader } from './PageLoader';

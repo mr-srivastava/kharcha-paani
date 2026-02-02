@@ -5,55 +5,49 @@ export default {
   theme: {
   	extend: {
   		colors: {
-  			// Migrate SCSS colors
-  			'blue-dark': '#213445',
-  			'green-primary': '#41b4a5',
-  			// Reference landing palette
-  			navy: { 800: '#222e3c', 900: '#1a222e' },
-  			teal: { 300: '#7ddfc3', 400: '#4cd0a8' },
-  			primary: {
+  		primary: {
   				'50': '#eff6ff',
   				'500': '#3b82f6',
   				'600': '#2563eb',
   				'700': '#1d4ed8',
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
+  				DEFAULT: 'var(--primary)',
+  				foreground: 'var(--primary-foreground)'
   			},
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
+  			background: 'var(--background)',
+  			foreground: 'var(--foreground)',
   			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
+  				DEFAULT: 'var(--card)',
+  				foreground: 'var(--card-foreground)'
   			},
   			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
+  				DEFAULT: 'var(--popover)',
+  				foreground: 'var(--popover-foreground)'
   			},
   			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
+  				DEFAULT: 'var(--secondary)',
+  				foreground: 'var(--secondary-foreground)'
   			},
   			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
+  				DEFAULT: 'var(--muted)',
+  				foreground: 'var(--muted-foreground)'
   			},
   			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
+  				DEFAULT: 'var(--accent)',
+  				foreground: 'var(--accent-foreground)'
   			},
   			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
+  				DEFAULT: 'var(--destructive)',
+  				foreground: 'var(--destructive-foreground)'
   			},
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
+  			border: 'var(--border)',
+  			input: 'var(--input)',
+  			ring: 'var(--ring)',
   			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
+  				'1': 'var(--chart-1)',
+  				'2': 'var(--chart-2)',
+  				'3': 'var(--chart-3)',
+  				'4': 'var(--chart-4)',
+  				'5': 'var(--chart-5)'
   			}
   		},
   		borderRadius: {
@@ -64,9 +58,10 @@ export default {
   		fontFamily: {
   			righteous: ['Righteous', 'cursive'],
   			quando: ['Quando', 'serif'],
-  			serif: ['"Playfair Display"', 'serif'],
-  			sans: ['"DM Sans"', 'sans-serif'],
-  			body: ['"DM Sans"', 'sans-serif']
+  			serif: ['Merriweather', 'serif'],
+  			sans: ['Montserrat', 'sans-serif'],
+  			mono: ['Source Code Pro', 'monospace'],
+  			body: ['Montserrat', 'sans-serif']
   		},
   		boxShadow: {
   			'glow': '0 0 20px rgba(76, 208, 168, 0.3)',

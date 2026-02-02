@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { LandingPage, GroupPage, Groups } from './pages';
+import { LandingPage, Groups, Group } from './pages';
 
 
 const App = () => {
@@ -9,7 +9,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/groups" element={<Groups />} />
-          <Route path="/group/:groupid" element={<GroupPage />} />
+          <Route path="/group/:groupid" element={<Group />} />
         </Routes>
       </div>
     </Router>

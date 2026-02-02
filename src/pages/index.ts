@@ -1,3 +1,3 @@
 export { LandingPage } from './LandingPage';
-export { GroupPage } from './GroupPage';
+export { Group } from './Group';
 export { Groups } from './Groups';

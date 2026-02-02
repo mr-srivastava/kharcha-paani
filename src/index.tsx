@@ -19,4 +19,3 @@ root.render(
     </ConvexProvider>
   </React.StrictMode>
 );
-

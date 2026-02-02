@@ -13,13 +13,13 @@ function NavBar(props: NavBarProps) {
       <nav className="relative z-20 w-full max-w-7xl mx-auto px-6 py-6 flex justify-between items-center text-white">
         <Link
           to="/"
-          className="flex items-center gap-3 cursor-pointer group focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-800 rounded-2xl outline-none"
+          className="flex items-center gap-3 cursor-pointer group focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl outline-none"
         >
           <div className="flex items-center justify-center w-12 h-12 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md group-hover:bg-white/10 transition-all duration-300">
-            <span className="font-serif font-bold text-2xl text-teal-400">K</span>
-            <span className="font-serif font-bold text-2xl text-white">P</span>
+            <span className="font-serif font-bold text-2xl text-primary">K</span>
+            <span className="font-serif font-bold text-2xl text-foreground">P</span>
           </div>
-          <span className="hidden sm:block font-sans text-lg font-medium text-slate-200 tracking-tight group-hover:text-white transition-colors">
+          <span className="hidden sm:block font-sans text-lg font-medium text-muted-foreground tracking-tight group-hover:text-foreground transition-colors">
             KharchaPaani
           </span>
         </Link>
@@ -28,8 +28,7 @@ function NavBar(props: NavBarProps) {
             to="/"
             end
             className={({ isActive }) =>
-              `px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                isActive ? 'text-white bg-white/10' : 'text-slate-300 hover:text-white hover:bg-white/5'
+              `px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive ? 'text-foreground bg-white/10' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
               }`
             }
           >
@@ -38,8 +37,7 @@ function NavBar(props: NavBarProps) {
           <NavLink
             to="/groups"
             className={({ isActive }) =>
-              `px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                isActive ? 'text-white bg-white/10' : 'text-slate-300 hover:text-white hover:bg-white/5'
+              `px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive ? 'text-foreground bg-white/10' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
               }`
             }
           >
@@ -51,27 +49,27 @@ function NavBar(props: NavBarProps) {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-blue-dark/95 backdrop-blur-md shadow-md border-b border-white/10">
+    <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md shadow-md border-b border-border">
       <div className="w-full flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
         <Link
           to="/"
-          className="font-righteous text-[29px] text-gray-200 hover:text-white transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-green-primary focus-visible:ring-offset-2 focus-visible:ring-offset-blue-dark rounded"
+          className="font-righteous text-[29px] text-muted-foreground hover:text-foreground transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card rounded"
         >
-          <span className="text-green-primary">Kharcha</span>Paani
+          <span className="text-primary">Kharcha</span>Paani
         </Link>
         <nav className="flex items-center gap-1">
           <NavLink
             to="/"
             end
             className={({ isActive }) =>
-              `text-gray-200 hover:text-white font-medium transition-all duration-200 ease-smooth relative py-2 px-3 rounded-md hover:bg-white/10 ${isActive ? 'text-green-primary bg-white/5' : ''}`
+              `text-muted-foreground hover:text-foreground font-medium transition-all duration-200 ease-smooth relative py-2 px-3 rounded-md hover:bg-white/10 ${isActive ? 'text-primary bg-white/5' : ''}`
             }
           >
             {({ isActive }) => (
               <>
                 Home
                 {isActive && (
-                  <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-green-primary rounded-full" />
+                  <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-primary rounded-full" />
                 )}
               </>
             )}
@@ -79,14 +77,14 @@ function NavBar(props: NavBarProps) {
           <NavLink
             to="/groups"
             className={({ isActive }) =>
-              `text-gray-200 hover:text-white font-medium transition-all duration-200 ease-smooth relative py-2 px-3 rounded-md hover:bg-white/10 ${isActive ? 'text-green-primary bg-white/5' : ''}`
+              `text-muted-foreground hover:text-foreground font-medium transition-all duration-200 ease-smooth relative py-2 px-3 rounded-md hover:bg-white/10 ${isActive ? 'text-primary bg-white/5' : ''}`
             }
           >
             {({ isActive }) => (
               <>
                 Groups
                 {isActive && (
-                  <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-green-primary rounded-full" />
+                  <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-primary rounded-full" />
                 )}
               </>
             )}

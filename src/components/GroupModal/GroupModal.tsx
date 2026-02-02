@@ -114,7 +114,7 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
               placeholder="Enter a name for the group."
               onChange={handleGroupNameChange}
               aria-label="GroupName"
-              className="transition-colors focus-visible:ring-2 focus-visible:ring-green-primary/50"
+              className="transition-colors focus-visible:ring-2 focus-visible:ring-primary/50"
             />
           </div>
           <div className="space-y-3">
@@ -135,7 +135,7 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
                     }
                   }}
                   aria-label="Add member"
-                  className="transition-colors focus-visible:ring-2 focus-visible:ring-green-primary/50"
+                  className="transition-colors focus-visible:ring-2 focus-visible:ring-primary/50"
                 />
               </div>
               <Button
@@ -186,7 +186,7 @@ function GroupModal({ open, setOpen, data, edit }: GroupModalProps) {
           <Button variant="outline" onClick={handleClose} className="transition-all duration-200">
             Cancel
           </Button>
-          <Button onClick={onDoneClick} className="bg-green-primary hover:bg-green-primary/90 transition-all duration-200">
+          <Button onClick={onDoneClick} className="bg-primary hover:bg-primary/90 transition-all duration-200">
             Save
           </Button>
         </DialogFooter>
